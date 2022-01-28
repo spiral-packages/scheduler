@@ -1,25 +1,30 @@
 {
-  "name": ":vendor_slug/:package_slug",
-  "description": ":package_description",
+  "name": "spiral-packages/scheduler",
+  "description": "This is my package scheduler",
   "keywords": [
-    ":vendor_name",
+    "spiral-packages",
     "spiral",
-    ":package_slug"
+    "scheduler"
   ],
-  "homepage": "https://github.com/:vendor_slug/:package_slug",
+  "homepage": "https://github.com/spiral-packages/scheduler",
   "license": "MIT",
   "authors": [
     {
-      "name": ":author_name",
-      "email": "author@domain.com",
-      "role": "Developer"
+      "name": "butschster",
+      "email": "butschster@gmail.com",
+      "role": "PHP web developer"
     }
   ],
   "require": {
     "php": "^8.0",
-    "spiral/boot": "^2.8",
-    "spiral/console": "^2.8",
-    "spiral/core": "^2.8"
+    "spiral/boot": "^2.9",
+    "spiral/console": "^2.9",
+    "spiral/core": "^2.9",
+    "spiral/queue": "^2.9",
+    "spiral/snapshots": "^2.9",
+    "symfony/process": "^6.0",
+    "nesbot/carbon": "^2.56",
+    "butschster/cron-expression-generator": "^1.10"
   },
   "require-dev": {
     "mockery/mockery": "^1.5",
@@ -28,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "VendorName\\Skeleton\\": "src"
+      "Spiral\\Scheduler\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "VendorName\\Skeleton\\Tests\\": "tests/src"
+      "Spiral\\Scheduler\\Tests\\": "tests/src"
     }
   },
   "scripts": {
@@ -46,7 +51,7 @@
   "extra": {
     "spiral": {
       "bootloaders": [
-        "VendorName\\Skeleton\\SkeletonBootloader"
+        "Spiral\\Scheduler\\SchedulerBootloader"
       ]
     }
   },

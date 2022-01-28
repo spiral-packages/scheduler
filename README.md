@@ -1,24 +1,88 @@
-# :package_description
+# This is my package scheduler
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/:vendor_slug/:package_slug/run-tests?label=tests)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-<!--delete-->
----
-This repo can be used to scaffold a Spiral Framework package. Follow these steps to get started:
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/spiral-packages/scheduler.svg?style=flat-square)](https://packagist.org/packages/spiral-packages/scheduler)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/spiral-packages/scheduler/run-tests?label=tests)](https://github.com/spiral-packages/scheduler/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/spiral-packages/scheduler.svg?style=flat-square)](https://packagist.org/packages/spiral-packages/scheduler)
 
-1. Press the "Use template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run `php ./configure.php` to run a script that will replace all placeholders throughout all the files.
----
-<!--/delete-->
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+This is a cron jobs scheduler that can be easily integrated with your project based on spiral framework. The idea was
+originally inspired by the Laravel Task Scheduling.
+
+## Requirements
+
+Make sure that your server is configured with following PHP version and extensions:
+
+- PHP 8.0+
+- Spiral framework 2.9+
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require :vendor_slug/:package_slug
+composer require spiral-packages/scheduler
+```
+
+After package install you need to add bootloader from the package to your application.
+
+```php
+use Spiral\Scheduler\SchedulerBootloader;
+
+protected const LOAD = [
+    // ...
+    SchedulerBootloader::class,
+];
+```
+
+Add a new alias in `cache` config and associate it with desired cache storage:
+
+```php
+'aliases' => [
+    'schedule' => 'file',
+],
+```
+
+Add a new alias in `queue` config and associate it with desired queue connection:
+
+```php
+'aliases' => [
+    'schedule' => 'sync',
+],
+```
+
+Add a cron configuration entry to our server that runs the `schedule:run` command every minute. 
+
+```bash
+* * * * * cd /path-to-your-project && php app.php schedule:run >> /dev/null 2>&1
+```
+
+## Usage
+
+Create a new bootloader, for example, `SchedulerBootloader`
+
+```php
+use Spiral\Boot\Bootloader\Bootloader;
+use App\Scheduling\Schedule;
+use Psr\Log\LoggerInterface;
+
+final class SchedulerBootloader extends Bootloader
+{
+    public function booted(Schedule $schedule): void
+    {
+        $schedule->command('ping', ['https://ya.ru'])
+            ->everyFiveMinutes()
+            ->withoutOverlapping()
+            ->appendOutputTo(directory('runtime').'logs/cron.log');
+            
+        $schedule->call('Ping url', static function (LoggerInterface $logger, string $url) {
+            $headers = @get_headers($url);
+            $status = $headers && strpos($headers[0], '200');
+
+            $logger->info(sprintf('URL: %s %s', $url, $status ? 'Exists' : 'Does not exist'));
+
+            return $status;
+        }, ['url' => 'https://google.com'])->everyFiveMinutes()->withoutOverlapping();
+    }
+}
 ```
 
 ## Testing
@@ -41,7 +105,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
+- [butschster](https://github.com/spiral-packages)
 - [All Contributors](../../contributors)
 
 ## License
