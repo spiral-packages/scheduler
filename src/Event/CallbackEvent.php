@@ -8,6 +8,7 @@ use Spiral\Core\Container;
 use Spiral\Queue\QueueConnectionProviderInterface;
 use Spiral\Scheduler\ClosureInvoker;
 use Spiral\Scheduler\CommandUtils;
+use Spiral\Scheduler\Config\SchedulerConfig;
 use Spiral\Scheduler\Mutex\EventMutexInterface;
 use Throwable;
 
@@ -36,12 +37,13 @@ final class CallbackEvent extends Event
         try {
             /** @var QueueConnectionProviderInterface $manager */
             $manager = $container->get(QueueConnectionProviderInterface::class);
+            $config = $container->get(SchedulerConfig::class);
 
             $callback = $this->callback;
             $params = $this->parameters;
             $id = $this->getId();
 
-            $manager->getConnection('schedule')->pushCallable(function (
+            $manager->getConnection($config->getCacheStorage())->pushCallable(function (
                 ClosureInvoker $invoker,
                 EventMutexInterface $mutex
             ) use ($callback, $params, $id) {

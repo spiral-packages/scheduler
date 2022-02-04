@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Spiral\Scheduler;
 
 use Spiral\Boot\Bootloader\Bootloader;
-use Spiral\Bootloader\ConsoleBootloader;
 use Spiral\Cache\CacheStorageProviderInterface;
+use Spiral\Console\Bootloader\ConsoleBootloader;
 use Spiral\Core\Container;
+use Spiral\Scheduler\Config\SchedulerConfig;
+use Spiral\Scheduler\Mutex\CacheEventMutex;
 use Spiral\Scheduler\Mutex\EventMutexInterface;
 
 class SchedulerBootloader extends Bootloader
@@ -43,10 +45,14 @@ class SchedulerBootloader extends Bootloader
         );
     }
 
-    private function initEventMutex(CacheStorageProviderInterface $provider): EventMutexInterface
-    {
+    private function initEventMutex(
+        CacheStorageProviderInterface $provider,
+        SchedulerConfig $config
+    ): EventMutexInterface {
         return new CacheEventMutex(
-            $provider->storage('schedule')
+            $provider->storage(
+                $config->getCacheStorage()
+            )
         );
     }
 }

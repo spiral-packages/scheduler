@@ -2,9 +2,21 @@
 
 namespace Spiral\Scheduler\Tests;
 
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Spiral\Boot\Bootloader\ConfigurationBootloader;
+use Spiral\Scheduler\Bootloader\SchedulerBootloader;
 
-class TestCase extends \PHPUnit\Framework\TestCase
+abstract class TestCase extends \Spiral\Testing\TestCase
 {
-    use MockeryPHPUnitIntegration;
+    public function rootDirectory(): string
+    {
+        return __DIR__.'/../';
+    }
+
+    public function defineBootloaders(): array
+    {
+        return [
+            ConfigurationBootloader::class,
+            SchedulerBootloader::class,
+        ];
+    }
 }

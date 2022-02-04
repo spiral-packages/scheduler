@@ -25,7 +25,7 @@ composer require spiral-packages/scheduler
 After package install you need to add bootloader from the package to your application.
 
 ```php
-use Spiral\Scheduler\SchedulerBootloader;
+use Spiral\Scheduler\Bootloader\SchedulerBootloader;
 
 protected const LOAD = [
     // ...
@@ -33,20 +33,17 @@ protected const LOAD = [
 ];
 ```
 
-Add a new alias in `cache` config and associate it with desired cache storage:
+At first you need to create config file `app/config/scheduler.php`
 
 ```php
-'aliases' => [
-    'schedule' => 'file',
-],
-```
+<?php
 
-Add a new alias in `queue` config and associate it with desired queue connection:
+declare(strict_types=1);
 
-```php
-'aliases' => [
-    'schedule' => 'sync',
-],
+return [
+    'queueConnection' => env('SCHEDULER_QUEUE_CONNECTION', 'sync'),
+    'cacheStorage' => env('SCHEDULER_CACHE_STORAGE', 'redis'), // for mutexes
+];
 ```
 
 Add a cron configuration entry to our server that runs the `schedule:run` command every minute. 
@@ -57,7 +54,7 @@ Add a cron configuration entry to our server that runs the `schedule:run` comman
 
 ## Usage
 
-Create a new bootloader, for example, `SchedulerBootloader`
+Create a new bootloader, for example, `SchedulerBootloader` in your application
 
 ```php
 use Spiral\Boot\Bootloader\Bootloader;
@@ -66,7 +63,7 @@ use Psr\Log\LoggerInterface;
 
 final class SchedulerBootloader extends Bootloader
 {
-    public function booted(Schedule $schedule): void
+    public function start(Schedule $schedule): void
     {
         $schedule->command('ping', ['https://ya.ru'])
             ->everyFiveMinutes()
