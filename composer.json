@@ -1,6 +1,6 @@
 {
   "name": "spiral-packages/scheduler",
-  "description": "This is my package scheduler",
+  "description": "The scheduler is a package for spiral framework. It will help to managing scheduled tasks on your server.",
   "keywords": [
     "spiral-packages",
     "spiral",
