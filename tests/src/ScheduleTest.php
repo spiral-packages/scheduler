@@ -1,0 +1,72 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Spiral\Scheduler\Tests;
+
+use Spiral\Scheduler\CommandRunner;
+use Spiral\Scheduler\Mutex\JobMutexInterface;
+use Spiral\Scheduler\Schedule;
+use Spiral\Scheduler\Tests\App\Command\SimpleCommand;
+use Symfony\Component\Process\PhpExecutableFinder;
+
+final class ScheduleTest extends TestCase
+{
+    private Schedule $schedule;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->schedule = new Schedule(
+            $this->getContainer(),
+            new CommandRunner(
+                $finder = $this->mockContainer(PhpExecutableFinder::class)
+            ),
+            $this->mockContainer(JobMutexInterface::class),
+            new \DateTimeZone('UTC')
+        );
+
+        $finder->shouldReceive('find')->andReturn('/usr/bin/php');
+    }
+
+    public function testRegisterCommand()
+    {
+        $job = $this->schedule
+            ->command('foo:bar', ['baz' => 'biz'], 'Simple job')
+            ->everyFifteenMinutes();
+
+        $this->assertSame('\'/usr/bin/php\' app.php foo:bar baz=\'biz\'', $job->getName());
+        $this->assertSame('Simple job', $job->getDescription());
+        $this->assertSame('*/15 * * * *', $job->getExpression());
+
+        $this->assertCount(1, $this->schedule->getJobs());
+    }
+
+    public function testRegisterCommandByClassname()
+    {
+        $job = $this->schedule
+            ->command(SimpleCommand::class, ['baz' => 'biz'], 'Simple job')
+            ->everyEvenMinute();
+
+        $this->assertSame('\'/usr/bin/php\' app.php foo:bar baz=\'biz\'', $job->getName());
+        $this->assertSame('Simple command', $job->getDescription());
+        $this->assertSame('*/2 * * * *', $job->getExpression());
+
+        $this->assertCount(1, $this->schedule->getJobs());
+    }
+
+    public function testRegisterCallableJob()
+    {
+        $job = $this->schedule
+            ->call('Simple callable job', static function () {
+            }, ['baz' => 'biz'])
+            ->everyFourMinutes();
+
+        $this->assertSame('callback: \'baz\'', $job->getName());
+        $this->assertSame('Simple callable job', $job->getDescription());
+        $this->assertSame('*/4 * * * *', $job->getExpression());
+
+        $this->assertCount(1, $this->schedule->getJobs());
+    }
+}

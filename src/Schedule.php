@@ -6,61 +6,62 @@ namespace Spiral\Scheduler;
 
 use Carbon\Carbon;
 use Closure;
+use Cron\CronExpression;
 use Spiral\Console\Command;
 use Spiral\Core\Container;
-use Spiral\Scheduler\Event\CallbackEvent;
-use Spiral\Scheduler\Event\CommandEvent;
-use Spiral\Scheduler\Event\Event;
-use Spiral\Scheduler\Mutex\EventMutexInterface;
+use Spiral\Scheduler\Job\CallbackJob;
+use Spiral\Scheduler\Job\CommandJob;
+use Spiral\Scheduler\Job\Job;
+use Spiral\Scheduler\Mutex\JobMutexInterface;
 
 final class Schedule
 {
-    /** @var array<Event> */
-    private array $events = [];
+    private const DEFAULT_EXPRESSION = '* * * * *';
+
+    /** @var array<Job> */
+    private array $jobs = [];
 
     public function __construct(
         private Container $container,
         private CommandRunner $commandRunner,
-        private CommandBuilder $commandBuilder,
-        private EventMutexInterface $eventMutex,
-        private ?\DateTimeZone $timezone = null
+        private JobMutexInterface $jobMutex,
+        private \DateTimeZone $timezone
     ) {
     }
 
     /**
-     * Get all of the events on the schedule that are due.
+     * Get all of the jobs on the schedule that are due.
      *
-     * @return iterable<int,Event>
+     * @return iterable<int,Job>
      */
-    public function dueEvents(): iterable
+    public function dueJobs(): iterable
     {
         $date = Carbon::now()->setTimezone($this->timezone);
 
-        foreach ($this->events as $event) {
-            if (! $event->isDue($date)) {
+        foreach ($this->jobs as $job) {
+            if (! $job->isDue($date)) {
                 continue;
             }
 
-            yield $event;
+            yield $job;
         }
     }
 
     /**
-     * Get all of the events on the schedule.
+     * Get all of the jobs on the schedule.
      *
-     * @return array<int,Event>
+     * @return array<int,Job>
      */
-    public function events(): array
+    public function getJobs(): array
     {
-        return $this->events;
+        return $this->jobs;
     }
 
     /**
      * Add a new console command to the schedule.
      */
-    public function command(string $commandName, array $parameters = []): CommandEvent
+    public function command(string $commandName, array $parameters = [], string $description = null): CommandJob
     {
-        $description = null;
         if (class_exists($commandName)) {
             /** @var Command $command */
             $command = $this->container->make($commandName);
@@ -79,31 +80,48 @@ final class Schedule
     }
 
     /**
-     * Add a new command event to the schedule.
+     * Add a new command job to the schedule.
      */
-    public function exec(string $command, array $parameters = [], ?string $description = null): CommandEvent
+    public function exec(string $command, array $parameters = [], ?string $description = null): CommandJob
     {
         if (count($parameters)) {
             $command .= ' '.CommandUtils::compileParameters($parameters);
         }
 
-        $this->events[] = $event = new CommandEvent(
-            commandBuilder: $this->commandBuilder,
-            mutex: $this->eventMutex,
+        $job = new CommandJob(
+            commandBuilder: new CommandBuilder($this->commandRunner),
+            mutex: $this->jobMutex,
+            expression: $this->createCronExpression(),
             command: $command
         );
 
-        $event->description($description);
+        $job->description($description);
 
-        return $event;
+        return $this->registerJob($job);
     }
 
-    public function call(string $description, Closure $callback, array $parameters = []): CallbackEvent
+    public function call(string $description, Closure $callback, array $parameters = []): CallbackJob
     {
-        $this->events[] = $event = new CallbackEvent(
-            $this->eventMutex, $description, $callback, $parameters
+        return $this->registerJob(
+            new CallbackJob(
+                mutex: $this->jobMutex,
+                expression: $this->createCronExpression(),
+                description: $description,
+                callback: $callback,
+                parameters: $parameters
+            )
         );
+    }
 
-        return $event;
+    public function registerJob(Job $job): Job
+    {
+        $this->jobs[] = $job;
+
+        return $job;
+    }
+
+    private function createCronExpression(): CronExpression
+    {
+        return new CronExpression(static::DEFAULT_EXPRESSION);
     }
 }

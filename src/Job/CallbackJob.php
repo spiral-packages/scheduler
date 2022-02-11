@@ -2,28 +2,29 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Scheduler\Event;
+namespace Spiral\Scheduler\Job;
 
+use Cron\CronExpression;
 use Spiral\Core\Container;
+use Spiral\Core\InvokerInterface;
 use Spiral\Queue\QueueConnectionProviderInterface;
-use Spiral\Scheduler\ClosureInvoker;
 use Spiral\Scheduler\CommandUtils;
 use Spiral\Scheduler\Config\SchedulerConfig;
-use Spiral\Scheduler\Mutex\EventMutexInterface;
+use Spiral\Scheduler\Mutex\JobMutexInterface;
 use Throwable;
 
-final class CallbackEvent extends Event
+final class CallbackJob extends Job
 {
-    /**
-     * Create a new event instance.
-     */
+    private ?string $name = null;
+
     public function __construct(
-        EventMutexInterface $mutex,
+        JobMutexInterface $mutex,
+        CronExpression $expression,
         protected ?string $description,
         private \Closure $callback,
         private array $parameters = []
     ) {
-        parent::__construct($mutex);
+        parent::__construct($mutex, $expression);
     }
 
     public function run(Container $container): void
@@ -43,13 +44,19 @@ final class CallbackEvent extends Event
             $params = $this->parameters;
             $id = $this->getId();
 
-            $manager->getConnection($config->getCacheStorage())->pushCallable(function (
-                ClosureInvoker $invoker,
-                EventMutexInterface $mutex
-            ) use ($callback, $params, $id) {
-                $invoker->invoke($callback, $params);
-                $mutex->forget($id);
-            });
+            if ($this->runInBackground()) {
+                $manager->getConnection($config->getQueueConnection())
+                    ->pushCallable(static function (
+                        InvokerInterface $invoker,
+                        JobMutexInterface $mutex
+                    ) use ($callback, $params, $id): void {
+                        $invoker->invoke($callback, $params);
+                        $mutex->forget($id);
+                    });
+            } else {
+                $container->invoke($callback, $params);
+                $this->removeMutex();
+            }
         } catch (Throwable $e) {
             $this->removeMutex();
             throw $e;
@@ -63,11 +70,22 @@ final class CallbackEvent extends Event
 
     public function getSystemDescription(): string
     {
-        return 'Callback event: '.$this->getId();
+        return 'Callback job: '.$this->getId();
     }
 
     public function getName(): string
     {
+        if ($this->name) {
+            return $this->name;
+        }
+
         return 'callback: '.CommandUtils::compileParameters(array_keys($this->parameters));
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
     }
 }

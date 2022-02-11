@@ -6,20 +6,21 @@ namespace Spiral\Scheduler;
 
 final class CommandBuilder
 {
-    public function __construct(private CommandRunner $commandRunner)
-    {
+    public function __construct(
+        private CommandRunner $commandRunner
+    ) {
     }
 
     public function buildForegroundCommand(
         string $command,
-        bool $shouldAppendOutput = false,
+        bool $appendOutput = false,
         string $output = '/dev/null',
         ?string $user = null
     ): string {
         $output = ProcessUtils::escapeArgument($output);
 
         return $this->ensureCorrectUser(
-            $command.($shouldAppendOutput ? ' >> ' : ' > ').$output.' 2>&1',
+            $command.($appendOutput ? ' >> ' : ' > ').$output.' 2>&1',
             $user
         );
     }
@@ -27,13 +28,13 @@ final class CommandBuilder
     public function buildBackgroundCommand(
         string $command,
         string $id,
-        bool $shouldAppendOutput = false,
+        bool $appendOutput = false,
         string $output = '/dev/null',
         ?string $user = null
     ): string {
         $output = ProcessUtils::escapeArgument($output);
 
-        $redirect = $shouldAppendOutput ? ' >> ' : ' > ';
+        $redirect = $appendOutput ? ' >> ' : ' > ';
 
         $finished = $this->commandRunner->formatCommandString('schedule:finish').' "'.$id.'"';
 
@@ -45,7 +46,7 @@ final class CommandBuilder
     }
 
     /**
-     * Finalize the event's command syntax with the correct user.
+     * Finalize the job's command syntax with the correct user.
      */
     protected function ensureCorrectUser(string $command, ?string $user = null): string
     {

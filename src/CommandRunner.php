@@ -8,6 +8,11 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 final class CommandRunner
 {
+    public function __construct(
+        private PhpExecutableFinder $phpFinder
+    ) {
+    }
+
     public function run(string $command)
     {
     }
@@ -18,7 +23,7 @@ final class CommandRunner
     public function phpBinary(): string
     {
         return ProcessUtils::escapeArgument(
-            (new PhpExecutableFinder())->find(false)
+            $this->phpFinder->find(false)
         );
     }
 

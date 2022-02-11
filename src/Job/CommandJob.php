@@ -2,24 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Scheduler\Event;
+namespace Spiral\Scheduler\Job;
 
+use Cron\CronExpression;
 use Spiral\Core\Container;
 use Spiral\Scheduler\CommandBuilder;
-use Spiral\Scheduler\Mutex\EventMutexInterface;
+use Spiral\Scheduler\Mutex\JobMutexInterface;
 use Symfony\Component\Process\Process;
 
-final class CommandEvent extends Event
+final class CommandJob extends Job
 {
-    /**
-     * Create a new event instance.
-     */
     public function __construct(
         private CommandBuilder $commandBuilder,
-        EventMutexInterface $mutex,
+        JobMutexInterface $mutex,
+        CronExpression $expression,
         private string $command
     ) {
-        parent::__construct($mutex);
+        parent::__construct($mutex, $expression);
     }
 
     /**
@@ -98,7 +97,7 @@ final class CommandEvent extends Event
             return $this->commandBuilder->buildBackgroundCommand(
                 command: $this->command,
                 id: $this->getId(),
-                shouldAppendOutput: $this->shouldAppendOutput,
+                appendOutput: $this->shouldAppendOutput,
                 output: $this->output,
                 user: $this->user
             );
@@ -106,7 +105,7 @@ final class CommandEvent extends Event
 
         return $this->commandBuilder->buildForegroundCommand(
             command: $this->command,
-            shouldAppendOutput: $this->shouldAppendOutput,
+            appendOutput: $this->shouldAppendOutput,
             output: $this->output,
             user: $this->user
         );

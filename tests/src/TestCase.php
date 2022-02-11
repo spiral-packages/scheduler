@@ -3,6 +3,7 @@
 namespace Spiral\Scheduler\Tests;
 
 use Spiral\Boot\Bootloader\ConfigurationBootloader;
+use Spiral\Cache\Bootloader\CacheBootloader;
 use Spiral\Scheduler\Bootloader\SchedulerBootloader;
 
 abstract class TestCase extends \Spiral\Testing\TestCase
@@ -16,6 +17,7 @@ abstract class TestCase extends \Spiral\Testing\TestCase
     {
         return [
             ConfigurationBootloader::class,
+            CacheBootloader::class,
             SchedulerBootloader::class,
         ];
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Scheduler\Event;
+namespace Spiral\Scheduler\Job;
 
 use Butschster\CronExpression\Parts\DateTime;
 use Butschster\CronExpression\PartValueInterface;
@@ -15,19 +15,12 @@ use Butschster\CronExpression\Traits\Years;
 use Cron\CronExpression;
 use DateTimeInterface;
 use Spiral\Core\Container;
-use Spiral\Scheduler\ClosureInvoker;
-use Spiral\Scheduler\Mutex\EventMutexInterface;
+use Spiral\Core\InvokerInterface;
+use Spiral\Scheduler\Mutex\JobMutexInterface;
 
-abstract class Event
+abstract class Job
 {
     use Minutes, Hours, Days, Weeks, Months, Years;
-
-    private const DEFAULT = '* * * * *';
-
-    /**
-     * The cron expression representing the event's frequency.
-     */
-    private CronExpression $expression;
 
     /**
      * The location that output should be sent to.
@@ -61,7 +54,7 @@ abstract class Event
     protected int $expiresAt = 1440;
 
     /**
-     * The human-readable description of the event.
+     * The human-readable description of the job.
      */
     protected ?string $description = null;
 
@@ -81,22 +74,23 @@ abstract class Event
     private array $filters = [];
 
     /**
-     * The array of callbacks to be run before the event is started.
+     * The array of callbacks to be run before the job is started.
      */
     private array $beforeCallbacks = [];
 
     /**
-     * The array of callbacks to be run after the event is finished.
+     * The array of callbacks to be run after the job is finished.
      */
     private array $afterCallbacks = [];
 
-    public function __construct(protected EventMutexInterface $mutex)
-    {
-        $this->expression = new CronExpression(self::DEFAULT);
+    public function __construct(
+        protected JobMutexInterface $mutex,
+        protected CronExpression $expression
+    ) {
     }
 
     /**
-     * Set the human-friendly description of the event.
+     * Set the human-friendly description of the job.
      */
     public function description(?string $description): self
     {
@@ -116,7 +110,7 @@ abstract class Event
     }
 
     /**
-     * Get the Cron expression for the event.
+     * Get the Cron expression for the job.
      */
     public function getExpression(): string
     {
@@ -132,7 +126,7 @@ abstract class Event
     }
 
     /**
-     * Get the summary of the event for display.
+     * Get the summary of the job for display.
      */
     public function getDescription(): ?string
     {
@@ -140,7 +134,7 @@ abstract class Event
     }
 
     /**
-     * Determine the next due date for an event.
+     * Determine the next due date for an job.
      * @throws \Exception
      */
     public function getNextRunDate(\DateTimeInterface $date, int $nth = 0, bool $allowCurrentDate = false): \DateTime
@@ -149,7 +143,7 @@ abstract class Event
     }
 
     /**
-     * Do not allow the event to overlap each other.
+     * Do not allow the job to overlap each other.
      */
     public function withoutOverlapping(int $expiresAt = 1440): self
     {
@@ -231,12 +225,11 @@ abstract class Event
     }
 
     /**
-     * Call all of the "before" callbacks for the event.
+     * Call all of the "before" callbacks for the job.
      */
     final protected function callBeforeCallbacks(Container $container): void
     {
-        /** @var ClosureInvoker $invoker */
-        $invoker = $container->get(ClosureInvoker::class);
+        $invoker = $container->get(InvokerInterface::class);
 
         foreach ($this->beforeCallbacks as $callback) {
             $invoker->invoke($callback);
@@ -244,23 +237,22 @@ abstract class Event
     }
 
     /**
-     * Call all of the "after" callbacks for the event.
+     * Call all of the "after" callbacks for the job.
      */
     final protected function callAfterCallbacks(Container $container): void
     {
-        /** @var ClosureInvoker $invoker */
-        $invoker = $container->get(ClosureInvoker::class);
+        $invoker = $container->get(InvokerInterface::class);
 
         foreach ($this->afterCallbacks as $callback) {
             $invoker->invoke($callback, [
                 'exitCode' => $this->exitCode,
-                'event' => $this,
+                'job' => $this,
             ]);
         }
     }
 
     /**
-     * Call all of the "after" callbacks for the event.
+     * Call all of the "after" callbacks for the job.
      */
     public function finish(Container $container, int $exitCode): void
     {
@@ -274,12 +266,11 @@ abstract class Event
     }
 
     /**
-     * Determine if the filters pass for the event.
+     * Determine if the filters pass for the job.
      */
     public function filtersPass(Container $container): bool
     {
-        /** @var ClosureInvoker $invoker */
-        $invoker = $container->get(ClosureInvoker::class);
+        $invoker = $container->get(InvokerInterface::class);
 
         foreach ($this->filters as $callback) {
             if (! $invoker->invoke($callback)) {
@@ -309,7 +300,7 @@ abstract class Event
     }
 
     /**
-     * Delete the mutex for the event.
+     * Delete the mutex for the job.
      */
     final protected function removeMutex(): void
     {

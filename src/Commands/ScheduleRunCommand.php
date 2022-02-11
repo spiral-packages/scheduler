@@ -4,56 +4,70 @@ declare(strict_types=1);
 
 namespace Spiral\Scheduler\Commands;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Spiral\Console\Command;
-use Spiral\Scheduler\Event\Event;
+use Spiral\Scheduler\Event\JobFailed;
+use Spiral\Scheduler\Event\JobFinished;
+use Spiral\Scheduler\Event\JobStarting;
+use Spiral\Scheduler\Job\Job;
 use Spiral\Scheduler\Schedule;
 use Spiral\Snapshots\SnapshotterInterface;
 
 final class ScheduleRunCommand extends Command
 {
     protected const NAME = 'schedule:run';
-    protected const DESCRIPTION = 'Run the scheduled commands';
+    protected const DESCRIPTION = 'Run the scheduled jobs';
 
-    private SnapshotterInterface $snapshotter;
+    private ?SnapshotterInterface $snapshotter;
+    private ?EventDispatcherInterface $dispatcher;
 
-    public function perform(Schedule $schedule, SnapshotterInterface $snapshotter): int
-    {
+    public function perform(
+        Schedule $schedule,
+        SnapshotterInterface $snapshotter = null,
+        EventDispatcherInterface $dispatcher = null
+    ): int {
+        $this->dispatcher = $dispatcher;
         $this->snapshotter = $snapshotter;
 
-        $eventsRan = false;
+        $jobsRan = false;
 
-        foreach ($schedule->dueEvents() as $event) {
-            if (! $event->filtersPass($this->container)) {
+        foreach ($schedule->dueJobs() as $job) {
+            if (! $job->filtersPass($this->container)) {
                 continue;
             }
 
-            $this->runEvent($event);
-            $eventsRan = true;
+            $this->runJob($job);
+            $jobsRan = true;
         }
 
-        if (! $eventsRan) {
-            $this->writeln('No scheduled commands are ready to run.');
-
-            return self::FAILURE;
+        if (! $jobsRan) {
+            $this->writeln('No scheduled jobs are ready to run.');
         }
 
         return self::SUCCESS;
     }
 
-    private function runEvent(Event $event): void
+    private function runJob(Job $job): void
     {
-        try {
-            $this->writeln(
-                sprintf(
-                    '<info>[%s] Running scheduled command:</info> %s',
-                    date('c'),
-                    $event->getDescription() ?? $event->getSystemDescription()
-                )
-            );
+        $this->writeln(
+            sprintf(
+                '<info>[%s] Running scheduled job:</info> %s',
+                date('c'),
+                $job->getDescription() ?? $job->getSystemDescription()
+            )
+        );
 
-            $event->run($this->container);
+        $this->dispatcher?->dispatch(new JobStarting($job));
+
+        $start = microtime(true);
+
+        try {
+            $job->run($this->container);
+
+            $this->dispatcher?->dispatch(new JobFinished($job, round(microtime(true) - $start, 2)));
         } catch (\Throwable $e) {
-            $this->snapshotter->register($e);
+            $this->dispatcher?->dispatch(new JobFailed($job, $e));
+            $this->snapshotter?->register($e);
         }
     }
 }

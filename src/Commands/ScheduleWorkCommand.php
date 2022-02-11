@@ -15,7 +15,7 @@ final class ScheduleWorkCommand extends Command
     protected const NAME = 'schedule:work';
     protected const DESCRIPTION = 'Start the schedule worker';
 
-    public function perform(Schedule $schedule, CommandRunner $runner): int
+    public function perform(CommandRunner $runner): int
     {
         $this->writeln('Schedule worker started successfully.');
 

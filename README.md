@@ -41,17 +41,47 @@ At first you need to create config file `app/config/scheduler.php`
 
 declare(strict_types=1);
 
+$generator = \Butschster\CronExpression\Generator::create();
+
 return [
     'queueConnection' => env('SCHEDULER_QUEUE_CONNECTION', 'sync'),
     'cacheStorage' => env('SCHEDULER_CACHE_STORAGE', 'redis'), // for mutexes
+    'timezone' => 'UTC',
+    'expression' => [
+        'aliases' => [
+            '@everyFiveMinutes' => (string)$generator->everyFiveMinutes(),
+            '@everyFifteenMinutes' => (string)$generator->everyFifteenMinutes(),
+        ],
+    ],
 ];
 ```
 
-Add a cron configuration entry to our server that runs the `schedule:run` command every minute. 
+Add a cron configuration entry to our server that runs the `schedule:run` command every minute.
 
 ```bash
 * * * * * cd /path-to-your-project && php app.php schedule:run >> /dev/null 2>&1
 ```
+
+If you don't have crontab or you want to run schedule via RoadRunner, you may use the `schedule:work` command.This
+command will run in the foreground and invoke the scheduler every minute until you terminate the command:
+
+```bash
+php app.php schedule:work
+```
+
+Or via RoadRunner
+
+```yaml
+service:
+  cron_worker:
+    command: "php app.php schedule:work"
+    process_num: 1
+    exec_timeout: 0
+    remain_after_exit: true
+    restart_sec: 1
+```
+
+Read more about RoadRunner configuration in the [official documentation](https://roadrunner.dev/docs/beep-beep-service)
 
 ## Usage
 
@@ -66,11 +96,20 @@ final class SchedulerBootloader extends Bootloader
 {
     public function start(Schedule $schedule): void
     {
-        $schedule->command('ping', ['https://ya.ru'])
+        // Run command by name
+        $schedule->command('ping', ['https://google.com'])
             ->everyFiveMinutes()
             ->withoutOverlapping()
             ->appendOutputTo(directory('runtime').'logs/cron.log');
             
+            
+        // Run command by class
+        $schedule->command(Command\PingCommand::class, ['https://google.com'])
+            ->everyFiveMinutes()
+            ->withoutOverlapping()
+            ->appendOutputTo(directory('runtime').'logs/cron.log');
+            
+        // Run callable command
         $schedule->call('Ping url', static function (LoggerInterface $logger, string $url) {
             $headers = @get_headers($url);
             $status = $headers && strpos($headers[0], '200');
@@ -79,6 +118,37 @@ final class SchedulerBootloader extends Bootloader
 
             return $status;
         }, ['url' => 'https://google.com'])->everyFiveMinutes()->withoutOverlapping();
+    }
+}
+```
+
+You can also register scheduler jobs via PHP attributes
+
+```php
+use Spiral\Scheduler\Attribute\Schedule;
+
+#[Schedule(
+    expression: '@everyFiveMinutes',
+    name: 'Ping url', 
+    parameters: ['url' => 'https://google.com'],
+    withoutOverlapping: true,
+    runAs: 'root',
+    runInBackground: true
+)]
+class SimpleJob
+{
+    public function __construct(
+        private LoggerInterface $logger
+    )  {
+        
+    }
+    
+    public function run(LoggerInterface $logger, string $url)
+    {
+        $headers = @get_headers($url);
+        $status = $headers && \strpos($headers[0], '200');
+
+        $this->logger->info(\sprintf('URL: %s %s', $url, $status ? 'Exists' : 'Does not exist'));
     }
 }
 ```

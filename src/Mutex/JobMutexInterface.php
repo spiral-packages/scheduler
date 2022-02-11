@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Spiral\Scheduler\Mutex;
 
-interface EventMutexInterface
+interface JobMutexInterface
 {
     /**
-     * Attempt to obtain an event mutex for the given event.
+     * Attempt to obtain a job mutex for the given job.
      */
     public function create(string $id, int $minutes): bool;
 
     /**
-     * Determine if an event mutex exists for the given event.
+     * Determine if a job mutex exists for the given job.
      */
     public function exists(string $id): bool;
 
     /**
-     * Clear the event mutex for the given event.
+     * Clear the job mutex for the given job.
      */
     public function forget(string $id): void;
 }

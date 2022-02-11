@@ -6,7 +6,7 @@ namespace Spiral\Scheduler\Mutex;
 
 use Psr\SimpleCache\CacheInterface;
 
-final class CacheEventMutex implements EventMutexInterface
+final class CacheJobMutex implements JobMutexInterface
 {
     public function __construct(private CacheInterface $cache)
     {

@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace Spiral\Scheduler\Commands;
 
 use Spiral\Console\Command;
-use Spiral\Core\Container;
 use Spiral\Scheduler\Schedule;
 use Symfony\Component\Console\Helper\Table;
 
 final class ScheduleListCommand extends Command
 {
     protected const NAME = 'schedule:list';
-    protected const DESCRIPTION = 'List the scheduled commands';
+    protected const DESCRIPTION = 'List the scheduled jobs';
 
-    public function perform(Schedule $schedule, Container $container): int
+    public function perform(Schedule $schedule): int
     {
         $date = \Carbon\Carbon::now();
 
@@ -26,7 +25,7 @@ final class ScheduleListCommand extends Command
             'Next Due',
         ]);
 
-        foreach ($schedule->events() as $event) {
+        foreach ($schedule->getJobs() as $event) {
             $table->addRow([
                 $event->getName(),
                 $event->getExpression(),

@@ -12,8 +12,22 @@ final class SchedulerConfig extends InjectableConfig
 
     protected $config = [
         'cacheStorage' => null,
-        'queueConnection' => null
+        'queueConnection' => null,
+        'timezone' => 'UTC',
+        'expression' => [
+            'aliases' => [],
+        ],
     ];
+
+    public function getTimezone(): \DateTimeZone
+    {
+        return new \DateTimeZone($this->config['timezone'] ?? 'UTC');
+    }
+
+    public function getExpressionAliases(): ?array
+    {
+        return $this->config['expression']['aliases'] ?? null;
+    }
 
     public function getCacheStorage(): ?string
     {
