@@ -1,7 +1,8 @@
-# This is my package scheduler
+# Cron jobs scheduler for Spiral Framework
 
+[![PHP](https://img.shields.io/packagist/php-v/spiral-packages/scheduler.svg?style=flat-square)](https://packagist.org/packages/spiral-packages/scheduler)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spiral-packages/scheduler.svg?style=flat-square)](https://packagist.org/packages/spiral-packages/scheduler)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/spiral-packages/scheduler/run-tests?label=tests)](https://github.com/spiral-packages/scheduler/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/spiral-packages/scheduler/run-tests?label=tests&style=flat-square)](https://github.com/spiral-packages/scheduler/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/spiral-packages/scheduler.svg?style=flat-square)](https://packagist.org/packages/spiral-packages/scheduler)
 
 This is a cron jobs scheduler that can be easily integrated with your project based on spiral framework. The idea was
