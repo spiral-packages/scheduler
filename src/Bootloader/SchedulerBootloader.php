@@ -79,7 +79,6 @@ class SchedulerBootloader extends Bootloader
         return new Schedule(
             $container,
             $commandRunner,
-            $commandBuilder,
             $container->get(JobMutexInterface::class),
             $config->getTimezone(),
         );
