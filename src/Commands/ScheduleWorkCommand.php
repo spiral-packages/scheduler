@@ -7,7 +7,6 @@ namespace Spiral\Scheduler\Commands;
 use Carbon\Carbon;
 use Spiral\Console\Command;
 use Spiral\Scheduler\CommandRunner;
-use Spiral\Scheduler\Schedule;
 use Symfony\Component\Process\Process;
 
 final class ScheduleWorkCommand extends Command
@@ -33,17 +32,15 @@ final class ScheduleWorkCommand extends Command
             }
 
             foreach ($executions as $key => $execution) {
-                $output = trim($execution->getIncrementalOutput()).
-                    trim($execution->getIncrementalErrorOutput());
+                $output = trim($execution->getIncrementalOutput());
+                $errorOutput = trim($execution->getIncrementalErrorOutput());
 
                 if (! empty($output)) {
-                    if ($key !== $keyOfLastExecutionWithOutput) {
-                        $this->writeln(PHP_EOL.'['.date('c').'] Execution #'.($key + 1).' output:');
+                    $this->writeln(\sprintf('<fg=green>%s</>', $output));
+                }
 
-                        $keyOfLastExecutionWithOutput = $key;
-                    }
-
-                    $this->output->writeln($output);
+                if (! empty($errorOutput)) {
+                    $this->writeln(\sprintf('<fg=red>%s</>', $errorOutput));
                 }
 
                 if (! $execution->isRunning()) {

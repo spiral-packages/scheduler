@@ -13,7 +13,6 @@ use Spiral\Cache\CacheStorageProviderInterface;
 use Spiral\Config\ConfiguratorInterface;
 use Spiral\Console\Bootloader\ConsoleBootloader;
 use Spiral\Core\Container;
-use Spiral\Scheduler\CommandBuilder;
 use Spiral\Scheduler\CommandRunner;
 use Spiral\Scheduler\Commands;
 use Spiral\Scheduler\Config\SchedulerConfig;
@@ -73,8 +72,7 @@ class SchedulerBootloader extends Bootloader
     private function initSchedule(
         Container $container,
         SchedulerConfig $config,
-        CommandRunner $commandRunner,
-        CommandBuilder $commandBuilder
+        CommandRunner $commandRunner
     ): Schedule {
         return new Schedule(
             $container,

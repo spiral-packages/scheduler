@@ -14,8 +14,8 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 class Schedule
 {
     public function __construct(
-        public string $expression,
         public string $name,
+        public string $expression = '* * * * *',
         public ?string $description = null,
         public ?string $runAs = null,
         public bool|int $withoutOverlapping = false,

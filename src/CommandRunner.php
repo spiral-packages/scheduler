@@ -22,9 +22,7 @@ final class CommandRunner
      */
     public function phpBinary(): string
     {
-        return ProcessUtils::escapeArgument(
-            $this->phpFinder->find(false)
-        );
+        return $this->phpFinder->find(false);
     }
 
     /**
@@ -32,7 +30,7 @@ final class CommandRunner
      */
     public function spiralBinary(): string
     {
-        return defined('SPIRAL_BINARY') ? ProcessUtils::escapeArgument(SPIRAL_BINARY) : 'app.php';
+        return defined('SPIRAL_BINARY') ? SPIRAL_BINARY : 'app.php';
     }
 
     /**
