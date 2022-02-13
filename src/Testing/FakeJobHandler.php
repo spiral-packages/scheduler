@@ -54,10 +54,6 @@ final class FakeJobHandler implements JobHandlerInterface
 
     private function getHandledJobs(\Closure $callback): array
     {
-        $callback = $callback ?? static function (Job $job): bool {
-            return true;
-        };
-
         $jobs = [];
 
         foreach ($this->handled as $job) {

@@ -8,6 +8,8 @@ use Cron\CronExpression;
 use Spiral\Core\Container;
 use Spiral\Core\InvokerInterface;
 use Spiral\Queue\QueueConnectionProviderInterface;
+use Spiral\Queue\QueueInterface;
+use Spiral\Queue\QueueTrait;
 use Spiral\Scheduler\CommandUtils;
 use Spiral\Scheduler\Config\SchedulerConfig;
 use Spiral\Scheduler\Mutex\JobMutexInterface;
@@ -36,23 +38,23 @@ final class CallbackJob extends Job
         parent::callBeforeCallbacks($container);
 
         try {
-            /** @var QueueConnectionProviderInterface $manager */
-            $manager = $container->get(QueueConnectionProviderInterface::class);
-            $config = $container->get(SchedulerConfig::class);
-
             $callback = $this->callback;
             $params = $this->parameters;
             $id = $this->getId();
 
-            if ($this->runInBackground()) {
-                $manager->getConnection($config->getQueueConnection())
-                    ->pushCallable(static function (
-                        InvokerInterface $invoker,
-                        JobMutexInterface $mutex
-                    ) use ($callback, $params, $id): void {
-                        $invoker->invoke($callback, $params);
-                        $mutex->forget($id);
-                    });
+            if ($this->runInBackground) {
+                /** @var QueueConnectionProviderInterface $manager */
+                $config = $container->get(SchedulerConfig::class);
+                $queue = $container->get(QueueConnectionProviderInterface::class)
+                    ->getConnection($config->getQueueConnection());
+
+                $queue->pushCallable(static function (
+                    InvokerInterface $invoker,
+                    JobMutexInterface $mutex
+                ) use ($callback, $params, $id): void {
+                    $invoker->invoke($callback, $params);
+                    $mutex->forget($id);
+                });
             } else {
                 $container->invoke($callback, $params);
                 $this->removeMutex();

@@ -13,8 +13,15 @@ final class CacheJobMutex implements JobMutexInterface
     ) {
     }
 
+    /**
+     * TODO: use real mutexes
+     */
     public function create(string $id, int $minutes): bool
     {
+        if ($this->cache->has($id)) {
+            return false;
+        }
+
         return $this->cache->set($id, true, $minutes * 60);
     }
 

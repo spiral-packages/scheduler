@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Scheduler;
 
+use Spiral\Scheduler\Exception\CommandRunnerException;
 use Symfony\Component\Process\PhpExecutableFinder;
 
 final class CommandRunner
@@ -19,10 +20,17 @@ final class CommandRunner
 
     /**
      * Determine the proper PHP executable.
+     * @throws CommandRunnerException
      */
     public function phpBinary(): string
     {
-        return $this->phpFinder->find(false);
+        $binary = $this->phpFinder->find(false);
+
+        if (! $binary) {
+            throw new CommandRunnerException('PHP binary not found.');
+        }
+
+        return $binary;
     }
 
     /**

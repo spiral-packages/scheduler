@@ -12,6 +12,16 @@
         </ignoreFiles>
     </projectFiles>
     <issueHandlers>
+        <InvalidReturnType>
+            <errorLevel type="suppress">
+                <directory name="src/Testing/" />
+            </errorLevel>
+        </InvalidReturnType>
+        <UndefinedInterfaceMethod>
+            <errorLevel type="suppress">
+                <referencedMethod name="Spiral\Queue\QueueInterface::pushCallable" />
+            </errorLevel>
+        </UndefinedInterfaceMethod>
         <UndefinedAttributeClass>
             <errorLevel type="suppress">
                 <referencedClass name="JetBrains\PhpStorm\ExpectedValues" />

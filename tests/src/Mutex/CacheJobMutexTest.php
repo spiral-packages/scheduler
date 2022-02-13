@@ -24,7 +24,15 @@ final class CacheJobMutexTest extends TestCase
     public function testCreates()
     {
         $this->cache->shouldReceive('set')->with('job-id', true, 100 * 60)->andReturnTrue();
+        $this->cache->shouldReceive('has')->with('job-id')->andReturnFalse();
+
         $this->assertTrue($this->mutex->create('job-id', 100));
+    }
+
+    public function testCreatesShouldReturnFalseIfJobIdExist()
+    {
+        $this->cache->shouldReceive('has')->with('job-id')->andReturnTrue();
+        $this->assertFalse($this->mutex->create('job-id', 100));
     }
 
     public function testExists()

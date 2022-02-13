@@ -38,6 +38,16 @@ final class CommandJobTest extends TestCase
         $finder->shouldReceive('find')->andReturn('/usr/bin/php');
     }
 
+    public function testGetsId(): void
+    {
+        $this->assertSame('schedule-6a31f94cad6c051f7fc2c0bcef19cbcded3f7330', $this->job->getId());
+    }
+
+    public function testGetsSystemDescription(): void
+    {
+        $this->assertSame('foo:bar > \'/dev/null\' 2>&1', $this->job->getSystemDescription());
+    }
+
     public function testGetsName(): void
     {
         $this->assertSame('foo:bar', $this->job->getName());
@@ -65,5 +75,49 @@ final class CommandJobTest extends TestCase
         $process->shouldReceive('run')->once()->andReturn(1);
 
         $this->job->run($this->getContainer());
+    }
+
+    public function testRunInBackground(): void
+    {
+        $this->processFactory->shouldReceive('createFromShellCommandline')
+            ->with('(foo:bar > \'/dev/null\' 2>&1 ; /usr/bin/php app.php schedule:finish "schedule-6a31f94cad6c051f7fc2c0bcef19cbcded3f7330" "$?") > \'/dev/null\' 2>&1 &')
+            ->andReturn($process = m::mock(Process::class));
+
+        $process->shouldReceive('run')->once()->andReturn(1);
+
+        $this->job->runInBackground()->run($this->getContainer());
+    }
+
+    public function testRunWithoutOverlapping(): void
+    {
+        $this->mutex->shouldReceive('create')
+            ->once()
+            ->with('schedule-6a31f94cad6c051f7fc2c0bcef19cbcded3f7330', 1440)
+            ->andReturnTrue();
+
+
+        $this->mutex->shouldReceive('forget')
+            ->once()
+            ->with('schedule-6a31f94cad6c051f7fc2c0bcef19cbcded3f7330');
+
+        $this->processFactory->shouldReceive('createFromShellCommandline')
+            ->with('foo:bar > \'/dev/null\' 2>&1')
+            ->andReturn($process = m::mock(Process::class));
+
+        $process->shouldReceive('run')->once()->andReturn(1);
+
+        $this->job->withoutOverlapping()->run($this->getContainer());
+    }
+
+    public function testRunWithoutOverlappingWithFiredJob(): void
+    {
+        $this->mutex->shouldReceive('create')
+            ->once()
+            ->with('schedule-6a31f94cad6c051f7fc2c0bcef19cbcded3f7330', 1600)
+            ->andReturnFalse();
+
+        $this->job->withoutOverlapping(1600)->run($this->getContainer());
+
+        $this->assertSame(1600, $this->job->getExpiresAt());
     }
 }

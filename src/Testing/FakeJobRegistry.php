@@ -45,7 +45,7 @@ final class FakeJobRegistry implements JobRegistryInterface
 
     public function getDueJobs(\DateTimeInterface $date): iterable
     {
-        // TODO: Implement getDueJobs() method.
+
     }
 
     public function getJobs(): array
@@ -58,10 +58,6 @@ final class FakeJobRegistry implements JobRegistryInterface
      */
     private function getRegisteredJobs(\Closure $callback): array
     {
-        $callback = $callback ?? static function (Job $job): bool {
-                return true;
-            };
-
         $jobs = [];
 
         foreach ($this->registered as $job) {

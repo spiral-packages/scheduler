@@ -6,7 +6,7 @@ $generator = \Butschster\CronExpression\Generator::create();
 
 return [
     'cacheStorage' => null,
-    'queueConnection' => null,
+    'queueConnection' => 'queue-test',
     'timezone' => 'UTC',
     'expression' => [
         'aliases' => [
