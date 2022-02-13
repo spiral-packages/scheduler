@@ -19,9 +19,14 @@ final class SchedulerConfig extends InjectableConfig
         ],
     ];
 
-    public function getTimezone(): \DateTimeZone
+    public function getTimezone(): ?\DateTimeZone
     {
-        return new \DateTimeZone($this->config['timezone'] ?? 'UTC');
+        $timezone = $this->config['timezone'] ?? null;
+        if ($timezone === null) {
+            return null;
+        }
+
+        return new \DateTimeZone($timezone);
     }
 
     public function getExpressionAliases(): ?array

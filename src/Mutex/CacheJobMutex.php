@@ -8,8 +8,9 @@ use Psr\SimpleCache\CacheInterface;
 
 final class CacheJobMutex implements JobMutexInterface
 {
-    public function __construct(private CacheInterface $cache)
-    {
+    public function __construct(
+        private CacheInterface $cache
+    ) {
     }
 
     public function create(string $id, int $minutes): bool

@@ -7,7 +7,7 @@ namespace Spiral\Scheduler\Commands;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Spiral\Console\Command;
 use Spiral\Scheduler\Event\BackgroundJobFinished;
-use Spiral\Scheduler\Schedule;
+use Spiral\Scheduler\JobRegistryInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 final class ScheduleFinishCommand extends Command
@@ -21,13 +21,13 @@ final class ScheduleFinishCommand extends Command
     ];
 
     public function perform(
-        Schedule $schedule,
+        JobRegistryInterface $registry,
         EventDispatcherInterface $dispatcher = null
     ): int {
         $id = $this->argument('id');
         $exitCode = $this->argument('code') ?? 0;
 
-        foreach ($schedule->getJobs() as $job) {
+        foreach ($registry->getJobs() as $job) {
             if ($job->getId() !== $id) {
                 continue;
             }

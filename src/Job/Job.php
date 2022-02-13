@@ -22,6 +22,27 @@ abstract class Job
 {
     use Minutes, Hours, Days, Weeks, Months, Years;
 
+    public const SUNDAY = 0;
+    public const MONDAY = 1;
+    public const TUESDAY = 2;
+    public const WEDNESDAY = 3;
+    public const THURSDAY = 4;
+    public const FRIDAY = 5;
+    public const SATURDAY = 6;
+
+    public const JAN = 1;
+    public const FEB = 2;
+    public const MAR = 3;
+    public const APR = 4;
+    public const MAY = 5;
+    public const JUN = 6;
+    public const JUL = 7;
+    public const AUG = 8;
+    public const SEP = 9;
+    public const OCT = 10;
+    public const NOV = 11;
+    public const DEC = 12;
+
     /**
      * The location that output should be sent to.
      */

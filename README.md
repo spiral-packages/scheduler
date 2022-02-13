@@ -159,6 +159,27 @@ class SimpleJob
 composer test
 ```
 
+If you are using `spiral/testing` package in your application, you can additionally use
+trait `Spiral\Scheduler\Testing\InteractsWithSchedule` in your tests cases.
+
+```php
+class MyJobSchedulingTest extends TestCase
+{
+    use \Spiral\Scheduler\Testing\InteractsWithSchedule;
+
+    public function testCheckIfJobRun(): void
+    {
+        $scheduler = $this->runScheduler('*/15 * * * *');
+        
+        $scheduler->assertHandled(function (\Spiral\Scheduler\Job\Job $job) {
+            return $job->getName() === 'My super job';
+        });
+        
+        $scheduler->assertHandledTotalJobs(5);
+    }
+}
+```
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.

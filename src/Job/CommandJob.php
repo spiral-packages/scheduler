@@ -8,12 +8,13 @@ use Cron\CronExpression;
 use Spiral\Core\Container;
 use Spiral\Scheduler\CommandBuilder;
 use Spiral\Scheduler\Mutex\JobMutexInterface;
-use Symfony\Component\Process\Process;
+use Spiral\Scheduler\ProcessFactory;
 
 final class CommandJob extends Job
 {
     public function __construct(
         private CommandBuilder $commandBuilder,
+        private ProcessFactory $processFactory,
         JobMutexInterface $mutex,
         CronExpression $expression,
         private string $command
@@ -48,11 +49,9 @@ final class CommandJob extends Job
         try {
             $this->callBeforeCallbacks($container);
 
-            $this->exitCode = Process::fromShellCommandline(
-                command: $this->buildCommand(),
-                cwd: directory('root'),
-                timeout: null
-            )->run();
+            $this->exitCode = $this->processFactory
+                ->createFromShellCommandline($this->buildCommand())
+                ->run();
 
             $this->callAfterCallbacks($container);
         } finally {
@@ -66,13 +65,9 @@ final class CommandJob extends Job
     private function runCommandInBackground(Container $container): void
     {
         try {
-            Process::fromShellCommandline(
-                command: $this->buildCommand(),
-                cwd: directory('root'),
-                timeout: null
-            )->run();
-        } catch (\Throwable $exception) {
-            throw $exception;
+            $this->processFactory
+                ->createFromShellCommandline($this->buildCommand())
+                ->run();
         } finally {
             $this->removeMutex();
         }

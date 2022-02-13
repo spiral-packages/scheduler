@@ -16,10 +16,17 @@ use Spiral\Core\Container;
 use Spiral\Scheduler\CommandRunner;
 use Spiral\Scheduler\Commands;
 use Spiral\Scheduler\Config\SchedulerConfig;
+use Spiral\Scheduler\EveryMinuteCommandRunner;
+use Spiral\Scheduler\JobHandler;
+use Spiral\Scheduler\JobHandlerInterface;
+use Spiral\Scheduler\JobRegistry;
+use Spiral\Scheduler\JobRegistryInterface;
 use Spiral\Scheduler\JobsLocator;
 use Spiral\Scheduler\JobsLocatorInterface;
 use Spiral\Scheduler\Mutex\CacheJobMutex;
 use Spiral\Scheduler\Mutex\JobMutexInterface;
+use Spiral\Scheduler\PeriodicCommandRunnerInterface;
+use Spiral\Scheduler\ProcessFactory;
 use Spiral\Scheduler\Schedule;
 use Spiral\Tokenizer\Bootloader\TokenizerBootloader;
 use Spiral\Tokenizer\ClassesInterface;
@@ -32,10 +39,14 @@ class SchedulerBootloader extends Bootloader
     ];
 
     protected const SINGLETONS = [
+        JobHandlerInterface::class => JobHandler::class,
+        PeriodicCommandRunnerInterface::class => EveryMinuteCommandRunner::class,
         Schedule::class => [self::class, 'initSchedule'],
         JobMutexInterface::class => [self::class, 'initEventMutex'],
         JobsLocatorInterface::class => JobsLocator::class,
         JobsLocator::class => [self::class, 'initJobsLocator'],
+        JobRegistryInterface::class => JobRegistry::class,
+        JobRegistry::class => JobRegistry::class,
     ];
 
     public function __construct(private ConfiguratorInterface $config)
@@ -57,9 +68,9 @@ class SchedulerBootloader extends Bootloader
             }
         });
 
-        $kernel->started(static function (JobsLocatorInterface $locator, Schedule $schedule): void {
+        $kernel->started(static function (JobsLocatorInterface $locator, JobRegistryInterface $registry): void {
             foreach ($locator->getJobs() as $job) {
-                $schedule->registerJob($job);
+                $registry->register($job);
             }
         });
 
@@ -71,14 +82,16 @@ class SchedulerBootloader extends Bootloader
 
     private function initSchedule(
         Container $container,
-        SchedulerConfig $config,
+        ProcessFactory $processFactory,
+        JobRegistryInterface $registry,
         CommandRunner $commandRunner
     ): Schedule {
         return new Schedule(
             $container,
+            $processFactory,
+            $registry,
             $commandRunner,
             $container->get(JobMutexInterface::class),
-            $config->getTimezone(),
         );
     }
 

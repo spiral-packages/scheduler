@@ -4,57 +4,26 @@ declare(strict_types=1);
 
 namespace Spiral\Scheduler;
 
-use Carbon\Carbon;
 use Closure;
 use Cron\CronExpression;
 use Spiral\Console\Command;
 use Spiral\Core\Container;
 use Spiral\Scheduler\Job\CallbackJob;
 use Spiral\Scheduler\Job\CommandJob;
-use Spiral\Scheduler\Job\Job;
 use Spiral\Scheduler\Mutex\JobMutexInterface;
 
 final class Schedule
 {
     private const DEFAULT_EXPRESSION = '* * * * *';
 
-    /** @var array<Job> */
-    private array $jobs = [];
 
     public function __construct(
         private Container $container,
+        private ProcessFactory $processFactory,
+        private JobRegistryInterface $jobs,
         private CommandRunner $commandRunner,
-        private JobMutexInterface $jobMutex,
-        private \DateTimeZone $timezone
+        private JobMutexInterface $jobMutex
     ) {
-    }
-
-    /**
-     * Get all of the jobs on the schedule that are due.
-     *
-     * @return iterable<int,Job>
-     */
-    public function dueJobs(): iterable
-    {
-        $date = Carbon::now()->setTimezone($this->timezone);
-
-        foreach ($this->jobs as $job) {
-            if (! $job->isDue($date)) {
-                continue;
-            }
-
-            yield $job;
-        }
-    }
-
-    /**
-     * Get all of the jobs on the schedule.
-     *
-     * @return array<int,Job>
-     */
-    public function getJobs(): array
-    {
-        return $this->jobs;
     }
 
     /**
@@ -90,32 +59,29 @@ final class Schedule
 
         $job = new CommandJob(
             commandBuilder: new CommandBuilder($this->commandRunner),
+            processFactory: $this->processFactory,
             mutex: $this->jobMutex,
             expression: $this->createCronExpression(),
             command: $command
         );
 
         $job->description($description);
+        $this->jobs->register($job);
 
-        return $this->registerJob($job);
+        return $job;
     }
 
     public function call(string $description, Closure $callback, array $parameters = []): CallbackJob
     {
-        return $this->registerJob(
-            new CallbackJob(
-                mutex: $this->jobMutex,
-                expression: $this->createCronExpression(),
-                description: $description,
-                callback: $callback,
-                parameters: $parameters
-            )
+        $job = new CallbackJob(
+            mutex: $this->jobMutex,
+            expression: $this->createCronExpression(),
+            description: $description,
+            callback: $callback,
+            parameters: $parameters
         );
-    }
 
-    public function registerJob(Job $job): Job
-    {
-        $this->jobs[] = $job;
+        $this->jobs->register($job);
 
         return $job;
     }

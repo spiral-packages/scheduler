@@ -15,7 +15,7 @@ final class CommandUtils
 
         foreach ($parameters as $key => $value) {
             if (is_array($value)) {
-                return static::compileArrayInput($key, $value);
+                return self::compileArrayInput($key, $value);
             }
 
             if (! is_numeric($value) && ! preg_match('/^(-.$|--.*)/i', $value)) {

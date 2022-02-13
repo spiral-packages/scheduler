@@ -60,7 +60,7 @@ final class CommandBuilderTest extends TestCase
     public function testBuildBackgroundCommand(): void
     {
         $this->assertSame(
-            "(foo:bar > '/dev/null' 2>&1 ; '/usr/bin/php' app.php schedule:finish \"foo-id\" \"$?\") > '/dev/null' 2>&1 &",
+            "(foo:bar > '/dev/null' 2>&1 ; /usr/bin/php app.php schedule:finish \"foo-id\" \"$?\") > '/dev/null' 2>&1 &",
             $this->builder->buildBackgroundCommand('foo:bar', 'foo-id')
         );
     }
@@ -68,7 +68,7 @@ final class CommandBuilderTest extends TestCase
     public function testBuildBackgroundCommandWithAppendOutput(): void
     {
         $this->assertSame(
-            "(foo:bar >> '/dev/null' 2>&1 ; '/usr/bin/php' app.php schedule:finish \"foo-id\" \"$?\") > '/dev/null' 2>&1 &",
+            "(foo:bar >> '/dev/null' 2>&1 ; /usr/bin/php app.php schedule:finish \"foo-id\" \"$?\") > '/dev/null' 2>&1 &",
             $this->builder->buildBackgroundCommand('foo:bar', 'foo-id', appendOutput: true)
         );
     }
@@ -76,7 +76,7 @@ final class CommandBuilderTest extends TestCase
     public function testBuildBackgroundCommandWithOutput(): void
     {
         $this->assertSame(
-            "(foo:bar > '/foo/bar' 2>&1 ; '/usr/bin/php' app.php schedule:finish \"foo-id\" \"$?\") > '/dev/null' 2>&1 &",
+            "(foo:bar > '/foo/bar' 2>&1 ; /usr/bin/php app.php schedule:finish \"foo-id\" \"$?\") > '/dev/null' 2>&1 &",
             $this->builder->buildBackgroundCommand('foo:bar', 'foo-id', output: '/foo/bar')
         );
     }
@@ -84,7 +84,7 @@ final class CommandBuilderTest extends TestCase
     public function testBuildBackgroundCommandWithUser(): void
     {
         $this->assertSame(
-            "sudo -u root -- sh -c '(foo:bar > '/dev/null' 2>&1 ; '/usr/bin/php' app.php schedule:finish \"foo-id\" \"$?\") > '/dev/null' 2>&1 &'",
+            "sudo -u root -- sh -c '(foo:bar > '/dev/null' 2>&1 ; /usr/bin/php app.php schedule:finish \"foo-id\" \"$?\") > '/dev/null' 2>&1 &'",
             $this->builder->buildBackgroundCommand('foo:bar', 'foo-id', user: 'root')
         );
     }

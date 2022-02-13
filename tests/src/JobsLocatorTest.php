@@ -32,7 +32,7 @@ final class JobsLocatorTest extends TestCase
 
         $this->assertSame('Simple job', $jobs[SimpleJobWithAttribute::class]->getName());
         $this->assertSame('Simple job description', $jobs[SimpleJobWithAttribute::class]->getDescription());
-        $this->assertSame('*/5 * * * *', $jobs[SimpleJobWithAttribute::class]->getExpression());
+        $this->assertSame('0 */6 * * *', $jobs[SimpleJobWithAttribute::class]->getExpression());
 
         $this->assertSame('Another simple job', $jobs[AnotherSimpleJobWithAttribute::class]->getName());
         $this->assertSame('Another simple job description', $jobs[AnotherSimpleJobWithAttribute::class]->getDescription());
