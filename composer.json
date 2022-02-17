@@ -18,7 +18,7 @@
   "require": {
     "php": "^8.0",
     "butschster/cron-expression-generator": "^1.10",
-    "nesbot/carbon": "^2.56",
+    "nesbot/carbon": "^2.52",
     "psr/event-dispatcher": "^1",
     "spiral/cache": "^2.9",
     "spiral/queue": "^2.9",
