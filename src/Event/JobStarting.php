@@ -9,7 +9,7 @@ use Spiral\Scheduler\Job\Job;
 final class JobStarting
 {
     public function __construct(
-        public Job $job
+        public readonly Job $job
     ) {
     }
 }

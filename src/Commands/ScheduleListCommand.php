@@ -22,7 +22,7 @@ final class ScheduleListCommand extends Command
         $jobs = $registry->getJobs();
 
         if (\count($jobs) === 0) {
-            $this->writeln('No scheduled jobs registered.');
+            $this->info('No scheduled jobs registered.');
 
             return self::SUCCESS;
         }

@@ -7,8 +7,8 @@ namespace Spiral\Scheduler\Tests\App\Jobs;
 use Spiral\Scheduler\Attribute\Schedule;
 
 #[Schedule(
-    expression: '@everyFifteenMinutes',
     name: 'Another simple job',
+    expression: '@everyFifteenMinutes',
     description: 'Another simple job description'
 )]
 final class AnotherSimpleJobWithAttribute

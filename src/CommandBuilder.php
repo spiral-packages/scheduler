@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Spiral\Scheduler;
 
-class CommandBuilder
+final class CommandBuilder
 {
     public function __construct(
-        private CommandRunner $commandRunner
+        private readonly CommandRunner $commandRunner
     ) {
     }
 

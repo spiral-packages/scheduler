@@ -15,15 +15,15 @@ final class ScheduleWorkCommand extends Command
     public function perform(
         PeriodicCommandRunnerInterface $runner
     ): int {
-        $this->writeln('Schedule worker started successfully.');
+        $this->info('Schedule worker started successfully.');
 
         $runner->run(
             'schedule:run',
             function (string $message) {
-                $this->writeln(\sprintf('<fg=green>%s</>', $message));
+                $this->line($message, 'green');
             },
             function (string $message) {
-                $this->writeln(\sprintf('<fg=red>%s</>', $message));
+                $this->error($message);
             }
         );
 

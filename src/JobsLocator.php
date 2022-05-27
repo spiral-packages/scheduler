@@ -15,9 +15,9 @@ use Spiral\Tokenizer\ClassesInterface;
 class JobsLocator implements JobsLocatorInterface
 {
     public function __construct(
-        private ClassesInterface $classes,
-        private ReaderInterface $reader,
-        private JobMutexInterface $mutex,
+        private readonly ClassesInterface $classes,
+        private readonly ReaderInterface $reader,
+        private readonly JobMutexInterface $mutex,
     ) {
     }
 
@@ -49,7 +49,7 @@ class JobsLocator implements JobsLocatorInterface
 
                 $container->invoke([
                     $object,
-                    method_exists($object, 'run') ? 'run' : '__invoke',
+                    \method_exists($object, 'run') ? 'run' : '__invoke',
                 ], $parameters);
             }
         );

@@ -9,8 +9,8 @@ use Spiral\Scheduler\Job\Job;
 final class JobFinished
 {
     public function __construct(
-        public Job $job,
-        public float $runtime
+        public readonly Job $job,
+        public readonly float $runtime
     ) {
     }
 }

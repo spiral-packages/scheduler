@@ -10,7 +10,7 @@ use Symfony\Component\Process\Process;
 class ProcessFactory
 {
     public function __construct(
-        private DirectoriesInterface $dirs
+        private readonly DirectoriesInterface $dirs
     ) {
     }
 

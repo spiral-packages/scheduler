@@ -49,18 +49,19 @@ class SchedulerBootloader extends Bootloader
         JobRegistry::class => JobRegistry::class,
     ];
 
-    public function __construct(private ConfiguratorInterface $config)
-    {
+    public function __construct(
+        private readonly ConfiguratorInterface $config
+    ) {
     }
 
-    public function boot(
+    public function init(
         EnvironmentInterface $env,
         AbstractKernel $kernel,
         ConsoleBootloader $console
     ): void {
         $this->initConfig($env);
 
-        $kernel->starting(static function (SchedulerConfig $config) {
+        $kernel->booting(static function (SchedulerConfig $config) {
             foreach ($config->getExpressionAliases() as $alias => $expression) {
                 if (! CronExpression::supportsAlias($alias)) {
                     CronExpression::registerAlias($alias, $expression);
@@ -68,7 +69,7 @@ class SchedulerBootloader extends Bootloader
             }
         });
 
-        $kernel->started(static function (JobsLocatorInterface $locator, JobRegistryInterface $registry): void {
+        $kernel->booted(static function (JobsLocatorInterface $locator, JobRegistryInterface $registry): void {
             foreach ($locator->getJobs() as $job) {
                 $registry->register($job);
             }

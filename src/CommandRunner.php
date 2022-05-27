@@ -10,11 +10,11 @@ use Symfony\Component\Process\PhpExecutableFinder;
 final class CommandRunner
 {
     public function __construct(
-        private PhpExecutableFinder $phpFinder
+        private readonly PhpExecutableFinder $phpFinder
     ) {
     }
 
-    public function run(string $command)
+    public function run(string $command): void
     {
     }
 
@@ -38,7 +38,7 @@ final class CommandRunner
      */
     public function spiralBinary(): string
     {
-        return defined('SPIRAL_BINARY') ? SPIRAL_BINARY : 'app.php';
+        return \defined('SPIRAL_BINARY') ? SPIRAL_BINARY : 'app.php';
     }
 
     /**
@@ -46,6 +46,6 @@ final class CommandRunner
      */
     public function formatCommandString(string $string): string
     {
-        return sprintf('%s %s %s', $this->phpBinary(), $this->spiralBinary(), $string);
+        return \sprintf('%s %s %s', $this->phpBinary(), $this->spiralBinary(), $string);
     }
 }

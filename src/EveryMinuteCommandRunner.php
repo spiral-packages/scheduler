@@ -13,9 +13,9 @@ class EveryMinuteCommandRunner implements PeriodicCommandRunnerInterface
     private array $executions = [];
 
     public function __construct(
-        private ProcessFactory $processFactory,
-        private CommandRunner $runner,
-        private SchedulerConfig $config
+        private readonly ProcessFactory $processFactory,
+        private readonly CommandRunner $runner,
+        private readonly SchedulerConfig $config
     ) {
     }
 
@@ -35,8 +35,8 @@ class EveryMinuteCommandRunner implements PeriodicCommandRunnerInterface
             }
 
             foreach ($this->executions as $key => $execution) {
-                $output = trim($execution->getIncrementalOutput());
-                $errorOutput = trim($execution->getIncrementalErrorOutput());
+                $output = \trim($execution->getIncrementalOutput());
+                $errorOutput = \trim($execution->getIncrementalErrorOutput());
 
                 if (! empty($output)) {
                     $onSuccess($output);
@@ -66,6 +66,6 @@ class EveryMinuteCommandRunner implements PeriodicCommandRunnerInterface
 
     private function waitMinute(): void
     {
-        usleep(100 * 1000);
+        \usleep(100 * 1000);
     }
 }

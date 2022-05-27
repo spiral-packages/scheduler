@@ -14,15 +14,15 @@ final class CommandUtils
         $string = '';
 
         foreach ($parameters as $key => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 return self::compileArrayInput($key, $value);
             }
 
-            if (! is_numeric($value) && ! preg_match('/^(-.$|--.*)/i', $value)) {
+            if (! \is_numeric($value) && ! \preg_match('/^(-.$|--.*)/i', $value)) {
                 $value = ProcessUtils::escapeArgument($value);
             }
 
-            $string .= is_numeric($key) ? $value : "{$key}={$value}";
+            $string .= \is_numeric($key) ? $value : "{$key}={$value}";
         }
 
         return $string;
@@ -33,20 +33,20 @@ final class CommandUtils
      */
     public static function compileArrayInput(string|int $key, array $value): string
     {
-        $value = array_map(static function ($value): string {
+        $value = \array_map(static function ($value): string {
             return ProcessUtils::escapeArgument($value);
         }, $value);
 
-        if (str_starts_with($key, '--')) {
-            $value = array_map(static function ($value) use ($key): string {
+        if (\str_starts_with($key, '--')) {
+            $value = \array_map(static function ($value) use ($key): string {
                 return "{$key}={$value}";
             }, $value);
-        } elseif (str_starts_with($key, '-')) {
-            $value = array_map(static function ($value) use ($key): string {
+        } elseif (\str_starts_with($key, '-')) {
+            $value = \array_map(static function ($value) use ($key): string {
                 return "{$key} {$value}";
             }, $value);
         }
 
-        return implode(' ', $value);
+        return \implode(' ', $value);
     }
 }

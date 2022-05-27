@@ -10,7 +10,7 @@ final class SchedulerConfig extends InjectableConfig
 {
     public const CONFIG = 'scheduler';
 
-    protected $config = [
+    protected array $config = [
         'cacheStorage' => null,
         'queueConnection' => null,
         'timezone' => 'UTC',

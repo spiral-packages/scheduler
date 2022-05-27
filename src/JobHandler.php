@@ -15,9 +15,9 @@ use Spiral\Snapshots\SnapshotterInterface;
 final class JobHandler implements JobHandlerInterface
 {
     public function __construct(
-        private Container $container,
-        private ?SnapshotterInterface $snapshotter = null,
-        private ?EventDispatcherInterface $dispatcher = null
+        private readonly Container $container,
+        private readonly ?SnapshotterInterface $snapshotter = null,
+        private readonly ?EventDispatcherInterface $dispatcher = null
     ) {
     }
 
@@ -25,12 +25,12 @@ final class JobHandler implements JobHandlerInterface
     {
         $this->dispatcher?->dispatch(new JobStarting($job));
 
-        $start = microtime(true);
+        $start = \microtime(true);
 
         try {
             $job->run($this->container);
 
-            $this->dispatcher?->dispatch(new JobFinished($job, round(microtime(true) - $start, 2)));
+            $this->dispatcher?->dispatch(new JobFinished($job, \round(\microtime(true) - $start, 2)));
         } catch (\Throwable $e) {
             $this->dispatcher?->dispatch(new JobFailed($job, $e));
             $this->snapshotter?->register($e);

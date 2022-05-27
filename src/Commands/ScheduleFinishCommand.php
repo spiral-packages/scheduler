@@ -12,13 +12,8 @@ use Symfony\Component\Console\Input\InputArgument;
 
 final class ScheduleFinishCommand extends Command
 {
-    protected const NAME = 'schedule:finish';
+    protected const SIGNATURE = 'schedule:finish {id : Job id} {code=0 : Exit code}';
     protected const DESCRIPTION = 'Handle the completion of a scheduled in background jobs';
-
-    public const ARGUMENTS = [
-        ['id', InputArgument::REQUIRED, 'Job id'],
-        ['code', InputArgument::OPTIONAL, 'Exit code', 0],
-    ];
 
     public function perform(
         JobRegistryInterface $registry,

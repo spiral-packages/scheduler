@@ -16,21 +16,19 @@
     }
   ],
   "require": {
-    "php": "^8.0",
+    "php": "^8.1",
     "butschster/cron-expression-generator": "^1.10",
     "nesbot/carbon": "^2.52",
     "psr/event-dispatcher": "^1",
-    "spiral/cache": "^2.9",
-    "spiral/queue": "^2.9",
-    "spiral/snapshots": "^2.9",
-    "spiral/attributes": "^2.9",
+    "spiral/cache": "^3.0",
+    "spiral/queue": "^3.0",
+    "spiral/snapshots": "^3.0",
+    "spiral/attributes": "^3.0",
     "symfony/process": "^6.0"
   },
   "require-dev": {
-    "spiral/framework": "^2.9",
-    "mockery/mockery": "^1.5",
-    "phpunit/phpunit": "^9.5",
-    "spiral/testing": "^1.0",
+    "spiral/framework": "^3.0",
+    "spiral/testing": "^2.0",
     "vimeo/psalm": "^4.9"
   },
   "autoload": {

@@ -29,10 +29,10 @@ final class ScheduleRunCommand extends Command
                 continue;
             }
 
-            $this->writeln(
-                sprintf(
+            $this->info(
+                \sprintf(
                     '[%s] Running scheduled job: %s',
-                    date('c'),
+                    \date('c'),
                     $job->getDescription() ?? $job->getSystemDescription()
                 )
             );
@@ -42,7 +42,7 @@ final class ScheduleRunCommand extends Command
         }
 
         if (! $jobsRan) {
-            $this->writeln('No scheduled jobs are ready to run.');
+            $this->info('No scheduled jobs are ready to run.');
         }
 
         return self::SUCCESS;

@@ -13,11 +13,11 @@ use Spiral\Scheduler\ProcessFactory;
 final class CommandJob extends Job
 {
     public function __construct(
-        private CommandBuilder $commandBuilder,
-        private ProcessFactory $processFactory,
+        private readonly CommandBuilder $commandBuilder,
+        private readonly ProcessFactory $processFactory,
         JobMutexInterface $mutex,
         CronExpression $expression,
-        private string $command
+        private readonly string $command
     ) {
         parent::__construct($mutex, $expression);
     }
@@ -78,7 +78,7 @@ final class CommandJob extends Job
      */
     public function getId(): string
     {
-        return 'schedule-'.sha1($this->getExpression().$this->command);
+        return 'schedule-'.\sha1($this->getExpression().$this->command);
     }
 
     public function getSystemDescription(): string

@@ -9,8 +9,8 @@ use Spiral\Scheduler\Job\Job;
 final class JobFailed
 {
     public function __construct(
-        public Job $job,
-        public \Throwable $exception
+        public readonly Job $job,
+        public readonly \Throwable $exception
     ) {
     }
 }

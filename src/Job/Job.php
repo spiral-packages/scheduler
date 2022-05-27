@@ -105,7 +105,7 @@ abstract class Job
     private array $afterCallbacks = [];
 
     public function __construct(
-        protected JobMutexInterface $mutex,
+        protected readonly JobMutexInterface $mutex,
         protected CronExpression $expression
     ) {
     }

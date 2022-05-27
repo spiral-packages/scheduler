@@ -8,8 +8,6 @@ use Cron\CronExpression;
 use Spiral\Core\Container;
 use Spiral\Core\InvokerInterface;
 use Spiral\Queue\QueueConnectionProviderInterface;
-use Spiral\Queue\QueueInterface;
-use Spiral\Queue\QueueTrait;
 use Spiral\Scheduler\CommandUtils;
 use Spiral\Scheduler\Config\SchedulerConfig;
 use Spiral\Scheduler\Mutex\JobMutexInterface;
@@ -23,8 +21,8 @@ final class CallbackJob extends Job
         JobMutexInterface $mutex,
         CronExpression $expression,
         protected ?string $description,
-        private \Closure $callback,
-        private array $parameters = []
+        private readonly \Closure $callback,
+        private readonly array $parameters = []
     ) {
         parent::__construct($mutex, $expression);
     }
@@ -67,7 +65,7 @@ final class CallbackJob extends Job
 
     public function getId(): string
     {
-        return 'schedule-'.sha1($this->getExpression().$this->description);
+        return 'schedule-'.\sha1($this->getExpression().$this->description);
     }
 
     public function getSystemDescription(): string

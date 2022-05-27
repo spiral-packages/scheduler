@@ -18,11 +18,11 @@ final class Schedule
 
 
     public function __construct(
-        private Container $container,
-        private ProcessFactory $processFactory,
-        private JobRegistryInterface $jobs,
-        private CommandRunner $commandRunner,
-        private JobMutexInterface $jobMutex
+        private readonly Container $container,
+        private readonly ProcessFactory $processFactory,
+        private readonly JobRegistryInterface $jobs,
+        private readonly CommandRunner $commandRunner,
+        private readonly JobMutexInterface $jobMutex
     ) {
     }
 
@@ -53,7 +53,7 @@ final class Schedule
      */
     public function exec(string $command, array $parameters = [], ?string $description = null): CommandJob
     {
-        if (count($parameters)) {
+        if (\count($parameters)) {
             $command .= ' '.CommandUtils::compileParameters($parameters);
         }
 
@@ -88,6 +88,6 @@ final class Schedule
 
     private function createCronExpression(): CronExpression
     {
-        return new CronExpression(static::DEFAULT_EXPRESSION);
+        return new CronExpression(self::DEFAULT_EXPRESSION);
     }
 }
