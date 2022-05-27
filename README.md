@@ -12,8 +12,8 @@ originally inspired by the Laravel Task Scheduling.
 
 Make sure that your server is configured with following PHP version and extensions:
 
-- PHP 8.0+
-- Spiral framework 2.9+
+- PHP 8.1+
+- Spiral framework 3.0+
 
 ## Installation
 
