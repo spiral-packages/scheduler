@@ -20,7 +20,7 @@ final class ScheduleWorkCommand extends Command
         $runner->run(
             'schedule:run',
             function (string $message) {
-                $this->line($message, 'green');
+                $this->writeln($message);
             },
             function (string $message) {
                 $this->error($message);

@@ -43,7 +43,7 @@ class EveryMinuteCommandRunner implements PeriodicCommandRunnerInterface
                 }
 
                 if (! empty($errorOutput)) {
-                    $onError($output);
+                    $onError($errorOutput);
                 }
 
                 if (! $execution->isRunning()) {
