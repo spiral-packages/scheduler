@@ -94,14 +94,13 @@ use Psr\Log\LoggerInterface;
 
 final class SchedulerBootloader extends Bootloader
 {
-    public function start(Schedule $schedule): void
+    public function boot(Schedule $schedule): void
     {
         // Run command by name
         $schedule->command('ping', ['https://google.com'])
             ->everyFiveMinutes()
             ->withoutOverlapping()
             ->appendOutputTo(directory('runtime').'logs/cron.log');
-            
             
         // Run command by class
         $schedule->command(Command\PingCommand::class, ['https://google.com'])
