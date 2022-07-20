@@ -39,7 +39,7 @@ final class ScheduleRunCommandTest extends TestCase
         $handler = $this->fakeScheduleJobHandler();
 
         $this->assertConsoleCommandOutputContainsStrings(
-            'schedule:run', strings: ['Running scheduled job: Job description']
+            'schedule:run', strings: ['Running scheduled: `Job description`']
         );
 
         $handler->assertHandledJob($job2);
