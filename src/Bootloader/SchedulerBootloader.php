@@ -9,6 +9,7 @@ use Spiral\Attributes\AttributeReader;
 use Spiral\Boot\AbstractKernel;
 use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Boot\EnvironmentInterface;
+use Spiral\Cache\Bootloader\CacheBootloader;
 use Spiral\Cache\CacheStorageProviderInterface;
 use Spiral\Config\ConfiguratorInterface;
 use Spiral\Console\Bootloader\ConsoleBootloader;
@@ -36,6 +37,7 @@ class SchedulerBootloader extends Bootloader
     protected const DEPENDENCIES = [
         ConsoleBootloader::class,
         TokenizerBootloader::class,
+        CacheBootloader::class,
     ];
 
     protected const SINGLETONS = [

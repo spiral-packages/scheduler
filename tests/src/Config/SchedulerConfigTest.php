@@ -15,14 +15,22 @@ final class SchedulerConfigTest extends TestCase
             'timezone' => 'UTC'
         ]);
 
-
         $this->assertSame('UTC', $config->getTimezone()->getName());
     }
 
     public function testGetsTimezoneCanReturnNull(): void
     {
-        $config = new SchedulerConfig();
+        $config = new SchedulerConfig([
+            'timezone' => null
+        ]);
         $this->assertNull($config->getTimezone());
+    }
+
+    public function testGetsDefaultTimezone(): void
+    {
+        $config = new SchedulerConfig();
+
+        $this->assertSame('UTC', $config->getTimezone()->getName());
     }
 
     public function testGetsCacheStorage(): void

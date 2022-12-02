@@ -6,6 +6,9 @@ namespace Spiral\Scheduler\Tests\Commands;
 
 use Mockery as m;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Spiral\Console\Event\CommandFinished;
+use Spiral\Console\Event\CommandStarting;
+use Spiral\Scheduler\Commands\ScheduleFinishCommand;
 use Spiral\Scheduler\Event\BackgroundJobFinished;
 use Spiral\Scheduler\Job\Job;
 use Spiral\Scheduler\JobRegistryInterface;
@@ -31,8 +34,14 @@ final class ScheduleFinishCommandTest extends TestCase
             $job2 = m::mock(Job::class),
         ]);
 
-        $events->shouldReceive('dispatch')->once()->withArgs(function (BackgroundJobFinished $event) use ($job1) {
-            return $event->job === $job1;
+        $events->shouldReceive('dispatch')->times(3)->withArgs(function (mixed $event) use ($job1) {
+            return match (true) {
+                $event instanceof CommandStarting => $event->command instanceof ScheduleFinishCommand,
+                $event instanceof BackgroundJobFinished => $event->job === $job1,
+                $event instanceof CommandFinished => $event->exitCode === 0
+                    && $event->command instanceof ScheduleFinishCommand,
+                default => false
+            };
         });
 
         $job1->shouldReceive('getId')->once()->andReturn('foo-id');
