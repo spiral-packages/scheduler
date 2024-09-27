@@ -22,7 +22,8 @@ class EveryMinuteCommandRunner implements PeriodicCommandRunnerInterface
     public function run(string $command, \Closure $onSuccess = null, \Closure $onError = null): void
     {
         while (true) {
-            $this->waitMinute();
+            // Wait 100ms before checking if the process should be executed
+            $this->wait();
 
             if ($this->shouldProcessBeExecuted()) {
                 $this->executions[] = $execution = $this->processFactory
@@ -61,10 +62,10 @@ class EveryMinuteCommandRunner implements PeriodicCommandRunnerInterface
     private function shouldProcessBeExecuted(): bool
     {
         return $this->now()->second === 0
-            && ! $this->now()->startOfMinute()->equalTo($this->lastExecutionStartedAt);
+            && ($this->lastExecutionStartedAt === null || ! $this->now()->startOfMinute()->equalTo($this->lastExecutionStartedAt));
     }
 
-    private function waitMinute(): void
+    private function wait(): void
     {
         \usleep(100 * 1000);
     }
