@@ -14,7 +14,7 @@ use Butschster\CronExpression\Traits\Weeks;
 use Butschster\CronExpression\Traits\Years;
 use Cron\CronExpression;
 use DateTimeInterface;
-use Spiral\Core\Container;
+use Psr\Container\ContainerInterface;
 use Spiral\Core\InvokerInterface;
 use Spiral\Scheduler\Mutex\JobMutexInterface;
 
@@ -248,7 +248,7 @@ abstract class Job
     /**
      * Call all of the "before" callbacks for the job.
      */
-    final protected function callBeforeCallbacks(Container $container): void
+    final protected function callBeforeCallbacks(ContainerInterface $container): void
     {
         $invoker = $container->get(InvokerInterface::class);
 
@@ -260,7 +260,7 @@ abstract class Job
     /**
      * Call all of the "after" callbacks for the job.
      */
-    final protected function callAfterCallbacks(Container $container): void
+    final protected function callAfterCallbacks(ContainerInterface $container): void
     {
         $invoker = $container->get(InvokerInterface::class);
 
@@ -275,7 +275,7 @@ abstract class Job
     /**
      * Call all of the "after" callbacks for the job.
      */
-    public function finish(Container $container, int $exitCode): void
+    public function finish(ContainerInterface $container, int $exitCode): void
     {
         $this->exitCode = $exitCode;
 
@@ -289,7 +289,7 @@ abstract class Job
     /**
      * Determine if the filters pass for the job.
      */
-    public function filtersPass(Container $container): bool
+    public function filtersPass(ContainerInterface $container): bool
     {
         $invoker = $container->get(InvokerInterface::class);
 
@@ -344,7 +344,7 @@ abstract class Job
     }
 
     /** @internal */
-    abstract public function run(Container $container): void;
+    abstract public function run(ContainerInterface $container): void;
 
     abstract public function getSystemDescription(): string;
 

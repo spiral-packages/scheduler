@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Spiral\Scheduler\Job;
 
 use Cron\CronExpression;
-use Spiral\Core\Container;
+use Psr\Container\ContainerInterface;
 use Spiral\Scheduler\CommandBuilder;
 use Spiral\Scheduler\Mutex\JobMutexInterface;
 use Spiral\Scheduler\ProcessFactory;
@@ -30,7 +30,7 @@ final class CommandJob extends Job
         return $this->command;
     }
 
-    public function run(Container $container): void
+    public function run(ContainerInterface $container): void
     {
         if ($this->withoutOverlapping && ! $this->mutex->create($this->getId(), $this->getExpiresAt())) {
             return;
@@ -44,7 +44,7 @@ final class CommandJob extends Job
     /**
      * Run the command in the foreground.
      */
-    private function runCommandInForeground(Container $container): void
+    private function runCommandInForeground(ContainerInterface $container): void
     {
         try {
             $this->callBeforeCallbacks($container);
@@ -62,7 +62,7 @@ final class CommandJob extends Job
     /**
      * Run the command in the background.
      */
-    private function runCommandInBackground(Container $container): void
+    private function runCommandInBackground(ContainerInterface $container): void
     {
         try {
             $this->processFactory

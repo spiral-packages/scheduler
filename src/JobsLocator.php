@@ -6,7 +6,8 @@ namespace Spiral\Scheduler;
 
 use Cron\CronExpression;
 use Spiral\Attributes\ReaderInterface;
-use Spiral\Core\Container;
+use Spiral\Core\FactoryInterface;
+use Spiral\Core\InvokerInterface;
 use Spiral\Scheduler\Attribute\Schedule as ScheduleAttribute;
 use Spiral\Scheduler\Job\CallbackJob;
 use Spiral\Scheduler\Mutex\JobMutexInterface;
@@ -44,10 +45,10 @@ class JobsLocator implements JobsLocatorInterface
                 $schedule->expression
             ),
             $schedule->description,
-            static function (Container $container) use ($className, $parameters) {
-                $object = $container->make($className);
+            static function (FactoryInterface $factory, InvokerInterface $invoker) use ($className, $parameters) {
+                $object = $factory->make($className);
 
-                $container->invoke([
+                $invoker->invoke([
                     $object,
                     \method_exists($object, 'run') ? 'run' : '__invoke',
                 ], $parameters);

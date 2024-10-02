@@ -7,7 +7,7 @@ namespace Spiral\Scheduler;
 use Closure;
 use Cron\CronExpression;
 use Spiral\Console\Command;
-use Spiral\Core\Container;
+use Spiral\Core\FactoryInterface;
 use Spiral\Scheduler\Job\CallbackJob;
 use Spiral\Scheduler\Job\CommandJob;
 use Spiral\Scheduler\Mutex\JobMutexInterface;
@@ -18,7 +18,7 @@ final class Schedule
 
 
     public function __construct(
-        private readonly Container $container,
+        private readonly FactoryInterface $factory,
         private readonly ProcessFactory $processFactory,
         private readonly JobRegistryInterface $jobs,
         private readonly CommandRunner $commandRunner,
@@ -33,7 +33,7 @@ final class Schedule
     {
         if (class_exists($commandName)) {
             /** @var Command $command */
-            $command = $this->container->make($commandName);
+            $command = $this->factory->make($commandName);
 
             if ($command instanceof Command) {
                 $commandName = $command->getName();
