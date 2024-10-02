@@ -289,7 +289,7 @@ abstract class Job
     /**
      * Determine if the filters pass for the job.
      */
-    public function filtersPass(Container $container): bool
+    public function filtersPass(ContainerInterface $container): bool
     {
         $invoker = $container->get(InvokerInterface::class);
 

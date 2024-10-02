@@ -7,7 +7,7 @@ namespace Spiral\Scheduler;
 use Closure;
 use Cron\CronExpression;
 use Spiral\Console\Command;
-use Spiral\Core\Container;
+use Spiral\Core\FactoryInterface;
 use Spiral\Scheduler\Job\CallbackJob;
 use Spiral\Scheduler\Job\CommandJob;
 use Spiral\Scheduler\Mutex\JobMutexInterface;
