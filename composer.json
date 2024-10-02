@@ -20,6 +20,8 @@
     "butschster/cron-expression-generator": "^1.10",
     "nesbot/carbon": "^2.52 || ^3.0",
     "psr/event-dispatcher": "^1",
+    "spiral/core": "^3.0",
+    "spiral/boot": "^3.0",
     "spiral/cache": "^3.0",
     "spiral/queue": "^3.0",
     "spiral/snapshots": "^3.0",
