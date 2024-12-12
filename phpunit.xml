@@ -1,16 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/autoload.php" backupGlobals="false"
-         backupStaticAttributes="false" colors="true" verbose="false" convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true" convertWarningsToExceptions="true" processIsolation="false"
-         stopOnFailure="false" stopOnError="false" stderr="false"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-    <coverage>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         cacheResultFile="runtime/phpunit/result.cache"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         failOnWarning="true"
+         failOnRisky="true"
+         executionOrder="random"
+         stderr="true"
+         beStrictAboutOutputDuringTests="true"
+>
+    <source>
         <include>
             <directory>src</directory>
         </include>
+        <exclude>
+            <directory>tests</directory>
+            <directory>src/Test</directory>
+        </exclude>
+    </source>
+    <coverage>
+        <report>
+            <html outputDirectory="runtime/coverage"/>
+            <text outputFile="runtime/coverage.txt"/>
+            <clover outputFile="runtime/logs/clover.xml"/>
+        </report>
     </coverage>
+    <logging>
+        <junit outputFile="runtime/report.junit.xml"/>
+    </logging>
     <testsuites>
-        <testsuite name="Test Suite">
+        <testsuite name="Unit">
             <directory>tests/src</directory>
         </testsuite>
     </testsuites>

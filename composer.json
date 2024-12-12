@@ -16,22 +16,22 @@
     }
   ],
   "require": {
-    "php": "^8.1",
+    "php": ">=8.1",
     "butschster/cron-expression-generator": "^1.10",
     "nesbot/carbon": "^2.52 || ^3.0",
     "psr/event-dispatcher": "^1",
-    "spiral/core": "^3.0",
-    "spiral/boot": "^3.0",
-    "spiral/cache": "^3.0",
-    "spiral/queue": "^3.0",
-    "spiral/snapshots": "^3.0",
+    "spiral/core": "^3.14",
+    "spiral/boot": "^3.14",
+    "spiral/cache": "^3.14",
+    "spiral/queue": "^3.14",
+    "spiral/snapshots": "^3.14",
     "spiral/attributes": "^2.8 || ^3.0",
     "symfony/process": "^6.0 || ^7.0"
   },
   "require-dev": {
-    "spiral/framework": "^3.0",
-    "spiral/testing": "^2.0",
-    "vimeo/psalm": "^4.9"
+    "spiral/framework": "^3.14",
+    "spiral/testing": "^2.8.2",
+    "vimeo/psalm": "^4.9 || ^5.26"
   },
   "autoload": {
     "psr-4": {
@@ -46,7 +46,7 @@
   },
   "scripts": {
     "test": "vendor/bin/phpunit",
-    "psalm": "vendor/bin/psalm --config=psalm.xml ./src"
+    "psalm": "vendor/bin/psalm"
   },
   "config": {
     "sort-packages": true,
