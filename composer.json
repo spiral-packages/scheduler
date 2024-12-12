@@ -29,6 +29,7 @@
     "symfony/process": "^6.0 || ^7.0"
   },
   "require-dev": {
+    "spiral/dumper": "^3.3",
     "spiral/framework": "^3.14",
     "spiral/testing": "^2.8.2",
     "vimeo/psalm": "^4.9 || ^5.26"

@@ -29,10 +29,10 @@ final class ScheduleRunCommandTest extends TestCase
             $job2 = m::mock(Job::class),
         ]);
 
-        $job1->shouldReceive('filtersPass')->once()->with($this->getContainer())->andReturnFalse();
+        $job1->shouldReceive('filtersPass')->once()->andReturnFalse();
         $job1->shouldReceive('getId')->andReturn('Job name');
 
-        $job2->shouldReceive('filtersPass')->once()->with($this->getContainer())->andReturnTrue();
+        $job2->shouldReceive('filtersPass')->once()->andReturnTrue();
         $job2->shouldReceive('getDescription')->once()->andReturn('Job description');
         $job2->shouldReceive('getId')->andReturn('Job name');
 
