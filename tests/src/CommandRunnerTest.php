@@ -13,15 +13,6 @@ final class CommandRunnerTest extends TestCase
     private CommandRunner $runner;
     private \Mockery\MockInterface $finder;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->runner = new CommandRunner(
-            $this->finder = \Mockery::mock(PhpExecutableFinder::class)
-        );
-    }
-
     public function testGetsPhpBinary(): void
     {
         $this->finder->shouldReceive('find')->once()->andReturn('/path/to/php');
@@ -35,5 +26,14 @@ final class CommandRunnerTest extends TestCase
 
         $this->finder->shouldReceive('find')->once()->andReturnFalse();
         $this->runner->phpBinary();
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->runner = new CommandRunner(
+            $this->finder = \Mockery::mock(PhpExecutableFinder::class),
+        );
     }
 }

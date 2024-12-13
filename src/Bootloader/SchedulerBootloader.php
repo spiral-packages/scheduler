@@ -39,7 +39,6 @@ class SchedulerBootloader extends Bootloader
         TokenizerBootloader::class,
         CacheBootloader::class,
     ];
-
     protected const SINGLETONS = [
         JobHandlerInterface::class => JobHandler::class,
         PeriodicCommandRunnerInterface::class => EveryMinuteCommandRunner::class,
@@ -52,18 +51,17 @@ class SchedulerBootloader extends Bootloader
     ];
 
     public function __construct(
-        private readonly ConfiguratorInterface $config
-    ) {
-    }
+        private readonly ConfiguratorInterface $config,
+    ) {}
 
     public function init(
         EnvironmentInterface $env,
         AbstractKernel $kernel,
-        ConsoleBootloader $console
+        ConsoleBootloader $console,
     ): void {
         $this->initConfig($env);
 
-        $kernel->booting(static function (SchedulerConfig $config) {
+        $kernel->booting(static function (SchedulerConfig $config): void {
             foreach ($config->getExpressionAliases() as $alias => $expression) {
                 if (! CronExpression::supportsAlias($alias)) {
                     CronExpression::registerAlias($alias, $expression);
@@ -87,7 +85,7 @@ class SchedulerBootloader extends Bootloader
         FactoryInterface $container,
         ProcessFactory $processFactory,
         JobRegistryInterface $registry,
-        CommandRunner $commandRunner
+        CommandRunner $commandRunner,
     ): Schedule {
         return new Schedule(
             $container,
@@ -100,23 +98,23 @@ class SchedulerBootloader extends Bootloader
 
     private function initJobsLocator(
         ClassesInterface $classes,
-        JobMutexInterface $mutex
+        JobMutexInterface $mutex,
     ): JobsLocatorInterface {
         return new JobsLocator($classes, new AttributeReader(), $mutex);
     }
 
     private function initEventMutex(
         CacheStorageProviderInterface $provider,
-        SchedulerConfig $config
+        SchedulerConfig $config,
     ): JobMutexInterface {
         return new CacheJobMutex(
             $provider->storage(
-                $config->getCacheStorage()
-            )
+                $config->getCacheStorage(),
+            ),
         );
     }
 
-    private function initConfig(EnvironmentInterface $env)
+    private function initConfig(EnvironmentInterface $env): void
     {
         $this->config->setDefaults(SchedulerConfig::CONFIG, [
             'cacheStorage' => $env->get('SCHEDULER_MUTEX_CACHE_STORAGE'),

@@ -16,7 +16,7 @@ final class FakeJobHandler implements JobHandlerInterface
     {
         TestCase::assertTrue(
             \count($this->getHandledJobs($callback)) > 0,
-            'The expected job was not handled.'
+            'The expected job was not handled.',
         );
     }
 
@@ -25,7 +25,7 @@ final class FakeJobHandler implements JobHandlerInterface
         $count = \count($this->handled);
         TestCase::assertTrue(
             $count === $totalJobs,
-            \sprintf('Scheduler handled {%d} jobs instead of {%d} times.', $count, $totalJobs)
+            \sprintf('Scheduler handled {%d} jobs instead of {%d} times.', $count, $totalJobs),
         );
     }
 
@@ -34,7 +34,7 @@ final class FakeJobHandler implements JobHandlerInterface
         TestCase::assertContains(
             $job,
             $this->handled,
-            \sprintf('The expected job [%s] was not handled.', $job->getId())
+            \sprintf('The expected job [%s] was not handled.', $job->getId()),
         );
     }
 
@@ -43,7 +43,7 @@ final class FakeJobHandler implements JobHandlerInterface
         TestCase::assertNotContains(
             $job,
             $this->handled,
-            \sprintf('The expected job [%s] was handled unexpectedly.', $job->getId())
+            \sprintf('The expected job [%s] was handled unexpectedly.', $job->getId()),
         );
     }
 

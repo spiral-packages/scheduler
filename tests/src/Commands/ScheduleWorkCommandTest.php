@@ -13,7 +13,7 @@ final class ScheduleWorkCommandTest extends TestCase
     {
         $runner = $this->mockContainer(PeriodicCommandRunnerInterface::class);
         $runner->shouldReceive('run')->once()->withSomeOfArgs('schedule:run')->andReturnUsing(
-            function (string $command, \Closure $onSuccess, \Closure $onError) {
+            static function (string $command, \Closure $onSuccess, \Closure $onError): void {
                 foreach ([1, 2] as $tick) {
                     if ($tick === 1) {
                         $onSuccess('Job handled');
@@ -23,11 +23,11 @@ final class ScheduleWorkCommandTest extends TestCase
                         $onError('Job error');
                     }
                 }
-            }
+            },
         );
 
         $this->assertConsoleCommandOutputContainsStrings('schedule:work', [], [
-            'Schedule worker started successfully.', 'Job handled', 'Job error'
+            'Schedule worker started successfully.', 'Job handled', 'Job error',
         ]);
     }
 }

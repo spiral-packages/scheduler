@@ -8,7 +8,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Spiral\Console\Command;
 use Spiral\Scheduler\Event\BackgroundJobFinished;
 use Spiral\Scheduler\JobRegistryInterface;
-use Symfony\Component\Console\Input\InputArgument;
 
 final class ScheduleFinishCommand extends Command
 {
@@ -17,7 +16,7 @@ final class ScheduleFinishCommand extends Command
 
     public function perform(
         JobRegistryInterface $registry,
-        EventDispatcherInterface $dispatcher = null
+        ?EventDispatcherInterface $dispatcher = null,
     ): int {
         $id = $this->argument('id');
         $exitCode = $this->argument('code') ?? 0;
@@ -27,7 +26,7 @@ final class ScheduleFinishCommand extends Command
                 continue;
             }
 
-            $job->finish($this->container, (int)$exitCode);
+            $job->finish($this->container, (int) $exitCode);
             $dispatcher?->dispatch(new BackgroundJobFinished($job));
         }
 

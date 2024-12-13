@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Spiral\Scheduler;
 
-use Closure;
 use Cron\CronExpression;
 use Spiral\Console\Command;
 use Spiral\Core\FactoryInterface;
@@ -16,22 +15,20 @@ final class Schedule
 {
     private const DEFAULT_EXPRESSION = '* * * * *';
 
-
     public function __construct(
         private readonly FactoryInterface $factory,
         private readonly ProcessFactory $processFactory,
         private readonly JobRegistryInterface $jobs,
         private readonly CommandRunner $commandRunner,
-        private readonly JobMutexInterface $jobMutex
-    ) {
-    }
+        private readonly JobMutexInterface $jobMutex,
+    ) {}
 
     /**
      * Add a new console command to the schedule.
      */
-    public function command(string $commandName, array $parameters = [], string $description = null): CommandJob
+    public function command(string $commandName, array $parameters = [], ?string $description = null): CommandJob
     {
-        if (class_exists($commandName)) {
+        if (\class_exists($commandName)) {
             /** @var Command $command */
             $command = $this->factory->make($commandName);
 
@@ -44,7 +41,7 @@ final class Schedule
         return $this->exec(
             $this->commandRunner->formatCommandString($commandName),
             $parameters,
-            $description
+            $description,
         );
     }
 
@@ -54,7 +51,7 @@ final class Schedule
     public function exec(string $command, array $parameters = [], ?string $description = null): CommandJob
     {
         if (\count($parameters)) {
-            $command .= ' '.CommandUtils::compileParameters($parameters);
+            $command .= ' ' . CommandUtils::compileParameters($parameters);
         }
 
         $job = new CommandJob(
@@ -62,7 +59,7 @@ final class Schedule
             processFactory: $this->processFactory,
             mutex: $this->jobMutex,
             expression: $this->createCronExpression(),
-            command: $command
+            command: $command,
         );
 
         $job->description($description);
@@ -71,14 +68,14 @@ final class Schedule
         return $job;
     }
 
-    public function call(string $description, Closure $callback, array $parameters = []): CallbackJob
+    public function call(string $description, \Closure $callback, array $parameters = []): CallbackJob
     {
         $job = new CallbackJob(
             mutex: $this->jobMutex,
             expression: $this->createCronExpression(),
             description: $description,
             callback: $callback,
-            parameters: $parameters
+            parameters: $parameters,
         );
 
         $this->jobs->register($job);

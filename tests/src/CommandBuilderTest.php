@@ -12,24 +12,11 @@ final class CommandBuilderTest extends TestCase
 {
     private CommandBuilder $builder;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->builder = new CommandBuilder(
-            new CommandRunner(
-                $finder = $this->mockContainer(PhpExecutableFinder::class)
-            )
-        );
-
-        $finder->shouldReceive('find')->with(false)->andReturn('/usr/bin/php');
-    }
-
     public function testBuildForegroundCommand(): void
     {
         $this->assertSame(
             "foo:bar > '/dev/null' 2>&1",
-            $this->builder->buildForegroundCommand('foo:bar')
+            $this->builder->buildForegroundCommand('foo:bar'),
         );
     }
 
@@ -37,7 +24,7 @@ final class CommandBuilderTest extends TestCase
     {
         $this->assertSame(
             "foo:bar >> '/dev/null' 2>&1",
-            $this->builder->buildForegroundCommand('foo:bar', appendOutput: true)
+            $this->builder->buildForegroundCommand('foo:bar', appendOutput: true),
         );
     }
 
@@ -45,7 +32,7 @@ final class CommandBuilderTest extends TestCase
     {
         $this->assertSame(
             "foo:bar > '/foo/bar' 2>&1",
-            $this->builder->buildForegroundCommand('foo:bar', output: '/foo/bar')
+            $this->builder->buildForegroundCommand('foo:bar', output: '/foo/bar'),
         );
     }
 
@@ -53,7 +40,7 @@ final class CommandBuilderTest extends TestCase
     {
         $this->assertSame(
             "sudo -u root -- sh -c 'foo:bar > '/dev/null' 2>&1'",
-            $this->builder->buildForegroundCommand('foo:bar', user: 'root')
+            $this->builder->buildForegroundCommand('foo:bar', user: 'root'),
         );
     }
 
@@ -61,7 +48,7 @@ final class CommandBuilderTest extends TestCase
     {
         $this->assertSame(
             "(foo:bar > '/dev/null' 2>&1 ; /usr/bin/php app.php schedule:finish \"foo-id\" \"$?\") > '/dev/null' 2>&1 &",
-            $this->builder->buildBackgroundCommand('foo:bar', 'foo-id')
+            $this->builder->buildBackgroundCommand('foo:bar', 'foo-id'),
         );
     }
 
@@ -69,7 +56,7 @@ final class CommandBuilderTest extends TestCase
     {
         $this->assertSame(
             "(foo:bar >> '/dev/null' 2>&1 ; /usr/bin/php app.php schedule:finish \"foo-id\" \"$?\") > '/dev/null' 2>&1 &",
-            $this->builder->buildBackgroundCommand('foo:bar', 'foo-id', appendOutput: true)
+            $this->builder->buildBackgroundCommand('foo:bar', 'foo-id', appendOutput: true),
         );
     }
 
@@ -77,7 +64,7 @@ final class CommandBuilderTest extends TestCase
     {
         $this->assertSame(
             "(foo:bar > '/foo/bar' 2>&1 ; /usr/bin/php app.php schedule:finish \"foo-id\" \"$?\") > '/dev/null' 2>&1 &",
-            $this->builder->buildBackgroundCommand('foo:bar', 'foo-id', output: '/foo/bar')
+            $this->builder->buildBackgroundCommand('foo:bar', 'foo-id', output: '/foo/bar'),
         );
     }
 
@@ -85,7 +72,20 @@ final class CommandBuilderTest extends TestCase
     {
         $this->assertSame(
             "sudo -u root -- sh -c '(foo:bar > '/dev/null' 2>&1 ; /usr/bin/php app.php schedule:finish \"foo-id\" \"$?\") > '/dev/null' 2>&1 &'",
-            $this->builder->buildBackgroundCommand('foo:bar', 'foo-id', user: 'root')
+            $this->builder->buildBackgroundCommand('foo:bar', 'foo-id', user: 'root'),
         );
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->builder = new CommandBuilder(
+            new CommandRunner(
+                $finder = $this->mockContainer(PhpExecutableFinder::class),
+            ),
+        );
+
+        $finder->shouldReceive('find')->with(false)->andReturn('/usr/bin/php');
     }
 }

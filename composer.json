@@ -1,67 +1,75 @@
 {
-  "name": "spiral-packages/scheduler",
-  "description": "The scheduler is a package for spiral framework. It will help to managing scheduled tasks on your server.",
-  "keywords": [
-    "spiral-packages",
-    "spiral",
-    "scheduler"
-  ],
-  "homepage": "https://github.com/spiral-packages/scheduler",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "butschster",
-      "email": "butschster@gmail.com",
-      "role": "PHP web developer"
-    }
-  ],
-  "require": {
-    "php": ">=8.1",
-    "butschster/cron-expression-generator": "^1.10",
-    "nesbot/carbon": "^2.52 || ^3.0",
-    "psr/event-dispatcher": "^1",
-    "spiral/core": "^3.14",
-    "spiral/boot": "^3.14",
-    "spiral/cache": "^3.14",
-    "spiral/queue": "^3.14",
-    "spiral/snapshots": "^3.14",
-    "spiral/attributes": "^2.8 || ^3.0",
-    "symfony/process": "^6.0 || ^7.0"
-  },
-  "require-dev": {
-    "spiral/dumper": "^3.3",
-    "spiral/framework": "^3.14",
-    "spiral/testing": "^2.8.2",
-    "vimeo/psalm": "^4.9 || ^5.26"
-  },
-  "autoload": {
-    "psr-4": {
-      "Spiral\\Scheduler\\": "src"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Spiral\\Scheduler\\Tests\\App\\": "tests/app",
-      "Spiral\\Scheduler\\Tests\\": "tests/src"
-    }
-  },
-  "scripts": {
-    "test": "vendor/bin/phpunit",
-    "psalm": "vendor/bin/psalm"
-  },
-  "config": {
-    "sort-packages": true,
-    "allow-plugins": {
-      "spiral/composer-publish-plugin": true
-    }
-  },
-  "extra": {
-    "spiral": {
-      "bootloaders": [
-        "Spiral\\Scheduler\\Bootloader\\SchedulerBootloader"
-      ]
-    }
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+    "name": "spiral-packages/scheduler",
+    "description": "The scheduler is a package for spiral framework. It will help to managing scheduled tasks on your server.",
+    "keywords": [
+        "spiral-packages",
+        "spiral",
+        "scheduler"
+    ],
+    "homepage": "https://github.com/spiral-packages/scheduler",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "butschster",
+            "email": "butschster@gmail.com",
+            "role": "PHP web developer"
+        },
+        {
+            "name": "roxblnfk",
+            "email": "roxblnfk@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "butschster/cron-expression-generator": "^1.10",
+        "nesbot/carbon": "^2.52 || ^3.0",
+        "psr/event-dispatcher": "^1",
+        "spiral/core": "^3.14",
+        "spiral/boot": "^3.14",
+        "spiral/cache": "^3.14",
+        "spiral/queue": "^3.14",
+        "spiral/snapshots": "^3.14",
+        "spiral/attributes": "^2.8 || ^3.0",
+        "symfony/process": "^6.0 || ^7.0"
+    },
+    "require-dev": {
+        "spiral/code-style": "^2.2",
+        "spiral/dumper": "^3.3",
+        "spiral/framework": "^3.14",
+        "spiral/testing": "^2.8.3",
+        "vimeo/psalm": "^4.9 || ^5.26"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spiral\\Scheduler\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Spiral\\Scheduler\\Tests\\App\\": "tests/app",
+            "Spiral\\Scheduler\\Tests\\": "tests/src"
+        }
+    },
+    "scripts": {
+        "cs:diff": "php-cs-fixer fix --dry-run -v --diff",
+        "cs:fix": "php-cs-fixer fix -v",
+        "psalm": "psalm",
+        "psalm:baseline": "psalm --set-baseline=psalm-baseline.xml",
+        "test": "phpunit --color=always"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "spiral/composer-publish-plugin": true
+        }
+    },
+    "extra": {
+        "spiral": {
+            "bootloaders": [
+                "Spiral\\Scheduler\\Bootloader\\SchedulerBootloader"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

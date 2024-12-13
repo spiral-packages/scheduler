@@ -17,26 +17,7 @@ final class ScheduleTest extends TestCase
     private Schedule $schedule;
     private FakeJobRegistry $registry;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->registry = $this->fakeScheduleJobRegistry();
-
-        $this->schedule = new Schedule(
-            $this->getContainer(),
-            $this->mockContainer(ProcessFactory::class),
-            $this->registry,
-            new CommandRunner(
-                $finder = $this->mockContainer(PhpExecutableFinder::class)
-            ),
-            $this->mockContainer(JobMutexInterface::class)
-        );
-
-        $finder->shouldReceive('find')->andReturn('/usr/bin/php');
-    }
-
-    public function testRegisterCommand()
+    public function testRegisterCommand(): void
     {
         $job = $this->schedule
             ->command('foo:bar', ['baz' => 'biz'], 'Simple job')
@@ -49,7 +30,7 @@ final class ScheduleTest extends TestCase
         $this->registry->assertRegisteredJob($job);
     }
 
-    public function testRegisterCommandByClassname()
+    public function testRegisterCommandByClassname(): void
     {
         $job = $this->schedule
             ->command(SimpleCommand::class, ['baz' => 'biz'], 'Simple job')
@@ -62,11 +43,10 @@ final class ScheduleTest extends TestCase
         $this->registry->assertRegisteredJob($job);
     }
 
-    public function testRegisterCallableJob()
+    public function testRegisterCallableJob(): void
     {
         $job = $this->schedule
-            ->call('Simple callable job', static function () {
-            }, ['baz' => 'biz'])
+            ->call('Simple callable job', static function (): void {}, ['baz' => 'biz'])
             ->everyFourMinutes();
 
         $this->assertSame('callback: \'baz\'', $job->getName());
@@ -74,5 +54,24 @@ final class ScheduleTest extends TestCase
         $this->assertSame('*/4 * * * *', $job->getExpression());
 
         $this->registry->assertRegisteredJob($job);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->registry = $this->fakeScheduleJobRegistry();
+
+        $this->schedule = new Schedule(
+            $this->getContainer(),
+            $this->mockContainer(ProcessFactory::class),
+            $this->registry,
+            new CommandRunner(
+                $finder = $this->mockContainer(PhpExecutableFinder::class),
+            ),
+            $this->mockContainer(JobMutexInterface::class),
+        );
+
+        $finder->shouldReceive('find')->andReturn('/usr/bin/php');
     }
 }

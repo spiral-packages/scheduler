@@ -17,7 +17,8 @@ final class ScheduleRunCommandTest extends TestCase
         $registry->shouldReceive('getDueJobs')->andReturn([]);
 
         $this->assertConsoleCommandOutputContainsStrings(
-            'schedule:run', strings: ['No scheduled jobs are ready to run.']
+            'schedule:run',
+            strings: ['No scheduled jobs are ready to run.'],
         );
     }
 
@@ -39,17 +40,18 @@ final class ScheduleRunCommandTest extends TestCase
         $handler = $this->fakeScheduleJobHandler();
 
         $this->assertConsoleCommandOutputContainsStrings(
-            'schedule:run', strings: ['Running scheduled: `Job description`']
+            'schedule:run',
+            strings: ['Running scheduled: `Job description`'],
         );
 
         $handler->assertHandledJob($job2);
         $handler->assertNotHandledJob($job1);
     }
 
-    public function testHandleJobByExpression()
+    public function testHandleJobByExpression(): void
     {
         $scheduler = $this->runScheduler('@everyFifteenMinutes');
-        $scheduler->assertHandled(function (Job $job) {
+        $scheduler->assertHandled(static function (Job $job) {
             return $job->getName() === 'Another simple job';
         });
         $scheduler->assertHandledTotalJobs(1);
@@ -57,10 +59,10 @@ final class ScheduleRunCommandTest extends TestCase
         //
 
         $scheduler = $this->runScheduler('@everySixHours');
-        $scheduler->assertHandled(function (Job $job) {
+        $scheduler->assertHandled(static function (Job $job) {
             return $job->getName() === 'Another simple job';
         });
-        $scheduler->assertHandled(function (Job $job) {
+        $scheduler->assertHandled(static function (Job $job) {
             return $job->getName() === 'Simple job';
         });
         $scheduler->assertHandledTotalJobs(2);

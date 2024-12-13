@@ -15,11 +15,10 @@ class EveryMinuteCommandRunner implements PeriodicCommandRunnerInterface
     public function __construct(
         private readonly ProcessFactory $processFactory,
         private readonly CommandRunner $runner,
-        private readonly SchedulerConfig $config
-    ) {
-    }
+        private readonly SchedulerConfig $config,
+    ) {}
 
-    public function run(string $command, \Closure $onSuccess = null, \Closure $onError = null): void
+    public function run(string $command, ?\Closure $onSuccess = null, ?\Closure $onError = null): void
     {
         while (true) {
             // Wait 100ms before checking if the process should be executed
@@ -28,7 +27,7 @@ class EveryMinuteCommandRunner implements PeriodicCommandRunnerInterface
             if ($this->shouldProcessBeExecuted()) {
                 $this->executions[] = $execution = $this->processFactory
                     ->createFromShellCommandline(
-                        $this->runner->formatCommandString($command)
+                        $this->runner->formatCommandString($command),
                     );
 
                 $execution->start();

@@ -10,13 +10,10 @@ use Symfony\Component\Process\PhpExecutableFinder;
 final class CommandRunner
 {
     public function __construct(
-        private readonly PhpExecutableFinder $phpFinder
-    ) {
-    }
+        private readonly PhpExecutableFinder $phpFinder,
+    ) {}
 
-    public function run(string $command): void
-    {
-    }
+    public function run(string $command): void {}
 
     /**
      * Determine the proper PHP executable.

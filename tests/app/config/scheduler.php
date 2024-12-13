@@ -10,8 +10,8 @@ return [
     'timezone' => 'UTC',
     'expression' => [
         'aliases' => [
-            '@everySixHours' => (string)$generator->everySixHours(),
-            '@everyFifteenMinutes' => (string)$generator->everyFifteenMinutes(),
+            '@everySixHours' => (string) $generator->everySixHours(),
+            '@everyFifteenMinutes' => (string) $generator->everyFifteenMinutes(),
         ],
     ],
 ];

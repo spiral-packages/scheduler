@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
-<psalm
-        errorLevel="4"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns="https://getpsalm.org/schema/config"
-        xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+<psalm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="https://getpsalm.org/schema/config"
+       xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+       errorLevel="1"
+       findUnusedBaselineEntry="false"
+       findUnusedCode="false"
+       errorBaseline="psalm-baseline.xml"
 >
     <projectFiles>
         <directory name="src" />
@@ -12,6 +14,7 @@
         </ignoreFiles>
     </projectFiles>
     <issueHandlers>
+        <MissingClassConstType errorLevel="suppress" />
         <InvalidReturnType>
             <errorLevel type="suppress">
                 <directory name="src/Testing/" />

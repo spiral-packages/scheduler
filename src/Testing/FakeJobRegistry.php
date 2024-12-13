@@ -17,11 +17,11 @@ final class FakeJobRegistry implements JobRegistryInterface
         $this->registered[] = $job;
     }
 
-    public function assertRegistered(\Closure $callback)
+    public function assertRegistered(\Closure $callback): void
     {
         TestCase::assertTrue(
             \count($this->getRegisteredJobs($callback)) > 0,
-            'The expected job was not dispatched.'
+            'The expected job was not dispatched.',
         );
     }
 
@@ -30,7 +30,7 @@ final class FakeJobRegistry implements JobRegistryInterface
         TestCase::assertContains(
             $job,
             $this->getJobs(),
-            \sprintf('The expected [%s] job was not registered.', $job->getName())
+            \sprintf('The expected [%s] job was not registered.', $job->getName()),
         );
     }
 
@@ -39,14 +39,11 @@ final class FakeJobRegistry implements JobRegistryInterface
         TestCase::assertNotContains(
             $job,
             $this->getJobs(),
-            \sprintf('The expected [%s] job was registered.', $job->getName())
+            \sprintf('The expected [%s] job was registered.', $job->getName()),
         );
     }
 
-    public function getDueJobs(\DateTimeInterface $date): iterable
-    {
-
-    }
+    public function getDueJobs(\DateTimeInterface $date): iterable {}
 
     public function getJobs(): array
     {

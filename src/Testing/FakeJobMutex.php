@@ -12,12 +12,12 @@ final class FakeJobMutex implements JobMutexInterface
     private array $created = [];
     private array $deleted = [];
 
-    public function assertCreated(string $id, int $minutes = null): void
+    public function assertCreated(string $id, ?int $minutes = null): void
     {
         TestCase::assertArrayHasKey(
             $id,
             $this->created,
-            \sprintf('The expected [%s] job mutex was not created.', $id)
+            \sprintf('The expected [%s] job mutex was not created.', $id),
         );
 
         if ($minutes !== null) {
@@ -28,8 +28,8 @@ final class FakeJobMutex implements JobMutexInterface
                     'The expected [%s] job mutex jas different ttl [%d], but expected [%d].',
                     $id,
                     $this->created[$id],
-                    $minutes
-                )
+                    $minutes,
+                ),
             );
         }
     }
@@ -41,7 +41,7 @@ final class FakeJobMutex implements JobMutexInterface
         TestCase::assertSame(
             0,
             $count,
-            \sprintf('%d unexpected mutexes were created.', $count)
+            \sprintf('%d unexpected mutexes were created.', $count),
         );
     }
 
@@ -52,7 +52,7 @@ final class FakeJobMutex implements JobMutexInterface
         TestCase::assertArrayHasKey(
             $id,
             $this->deleted,
-            \sprintf('The expected [%s] job mutex was not forgotten.', $id)
+            \sprintf('The expected [%s] job mutex was not forgotten.', $id),
         );
     }
 

@@ -20,7 +20,7 @@ trait InteractsWithSchedule
     {
         $date = (new Generator())->cron($expression)->getExpression()->getNextRunDate();
 
-        $this->runScoped(static function () use ($date) {
+        $this->runScoped(static function () use ($date): void {
             Carbon::setTestNow(Carbon::parse($date));
 
             $command = new ScheduleRunCommand();
@@ -39,7 +39,7 @@ trait InteractsWithSchedule
     {
         $this->getContainer()->bindSingleton(
             JobHandlerInterface::class,
-            $handler = new FakeJobHandler()
+            $handler = new FakeJobHandler(),
         );
 
         return $handler;
@@ -49,7 +49,7 @@ trait InteractsWithSchedule
     {
         $this->getContainer()->bindSingleton(
             JobRegistryInterface::class,
-            $registry = new FakeJobRegistry()
+            $registry = new FakeJobRegistry(),
         );
 
         return $registry;
@@ -59,7 +59,7 @@ trait InteractsWithSchedule
     {
         $this->getContainer()->bindSingleton(
             JobMutexInterface::class,
-            $mutex = new FakeJobMutex()
+            $mutex = new FakeJobMutex(),
         );
 
         return $mutex;

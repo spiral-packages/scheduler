@@ -9,9 +9,8 @@ use Psr\SimpleCache\CacheInterface;
 final class CacheJobMutex implements JobMutexInterface
 {
     public function __construct(
-        private readonly CacheInterface $cache
-    ) {
-    }
+        private readonly CacheInterface $cache,
+    ) {}
 
     /**
      * TODO: use real mutexes

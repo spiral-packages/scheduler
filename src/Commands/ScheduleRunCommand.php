@@ -33,8 +33,8 @@ final class ScheduleRunCommand extends Command
                 \sprintf(
                     '[%s] Running scheduled: `%s`',
                     \date('c'),
-                    $job->getDescription() ?? $job->getSystemDescription()
-                )
+                    $job->getDescription() ?? $job->getSystemDescription(),
+                ),
             );
 
             $jobHandler->handle($job);

@@ -15,14 +15,16 @@ final class ScheduleListCommandTest extends TestCase
         $registry->shouldReceive('getJobs')->andReturn([]);
 
         $this->assertConsoleCommandOutputContainsStrings(
-            'schedule:list', strings: ['No scheduled jobs registered.']
+            'schedule:list',
+            strings: ['No scheduled jobs registered.'],
         );
     }
 
     public function testRegisteredJobs(): void
     {
         $this->assertConsoleCommandOutputContainsStrings(
-            'schedule:list', strings: ['Simple job', 'Another simple job']
+            'schedule:list',
+            strings: ['Simple job', 'Another simple job'],
         );
     }
 }

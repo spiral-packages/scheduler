@@ -12,7 +12,7 @@ final class ProcessFactoryTest extends TestCase
     public function testCreatesFromShellCommandline(): void
     {
         $factory = new ProcessFactory(
-            $dirs = $this->mockContainer(DirectoriesInterface::class)
+            $dirs = $this->mockContainer(DirectoriesInterface::class),
         );
 
         $dirs->shouldReceive('get')->once()->with('root')->andReturn('/path/to/project');

@@ -17,9 +17,8 @@ final class JobHandler implements JobHandlerInterface
     public function __construct(
         private readonly ContainerInterface $container,
         private readonly ?SnapshotterInterface $snapshotter = null,
-        private readonly ?EventDispatcherInterface $dispatcher = null
-    ) {
-    }
+        private readonly ?EventDispatcherInterface $dispatcher = null,
+    ) {}
 
     public function handle(Job $job): void
     {
