@@ -17,7 +17,7 @@ final class JobHandlerTest extends TestCase
     public function testHandleJob(): void
     {
         $handler = new JobHandler(
-            $this->getContainer()
+            $this->getContainer(),
         );
 
         $job = \Mockery::mock(Job::class);
@@ -34,11 +34,11 @@ final class JobHandlerTest extends TestCase
             $events = $this->mockContainer(EventDispatcherInterface::class),
         );
 
-        $events->shouldReceive('dispatch')->once()->withArgs(function ($job) {
+        $events->shouldReceive('dispatch')->once()->withArgs(static function ($job) {
             return $job instanceof JobStarting;
         });
 
-        $events->shouldReceive('dispatch')->once()->withArgs(function ($job) {
+        $events->shouldReceive('dispatch')->once()->withArgs(static function ($job) {
             return $job instanceof JobFinished;
         });
 
@@ -56,11 +56,11 @@ final class JobHandlerTest extends TestCase
             $events = $this->mockContainer(EventDispatcherInterface::class),
         );
 
-        $events->shouldReceive('dispatch')->once()->withArgs(function ($job) {
+        $events->shouldReceive('dispatch')->once()->withArgs(static function ($job) {
             return $job instanceof JobStarting;
         });
 
-        $events->shouldReceive('dispatch')->once()->withArgs(function ($job) {
+        $events->shouldReceive('dispatch')->once()->withArgs(static function ($job) {
             return $job instanceof JobFailed;
         });
 

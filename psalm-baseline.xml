@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="5.26.1@d747f6500b38ac4f7dfc5edbcae6e4b637d7add0">
+  <file src="src/Bootloader/SchedulerBootloader.php">
+    <MixedArgument>
+      <code><![CDATA[$alias]]></code>
+      <code><![CDATA[$container->get(JobMutexInterface::class)]]></code>
+      <code><![CDATA[$expression]]></code>
+    </MixedArgument>
+    <MixedAssignment>
+      <code><![CDATA[$alias]]></code>
+      <code><![CDATA[$expression]]></code>
+    </MixedAssignment>
+    <PossiblyNullIterator>
+      <code><![CDATA[$config->getExpressionAliases()]]></code>
+    </PossiblyNullIterator>
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[get]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/CommandBuilder.php">
+    <RiskyTruthyFalsyComparison>
+      <code><![CDATA[$user]]></code>
+    </RiskyTruthyFalsyComparison>
+  </file>
+  <file src="src/CommandRunner.php">
+    <MixedInferredReturnType>
+      <code><![CDATA[string]]></code>
+    </MixedInferredReturnType>
+    <MixedReturnStatement>
+      <code><![CDATA[\defined('SPIRAL_BINARY') ? SPIRAL_BINARY : 'app.php']]></code>
+    </MixedReturnStatement>
+    <RiskyTruthyFalsyComparison>
+      <code><![CDATA[! $binary]]></code>
+    </RiskyTruthyFalsyComparison>
+  </file>
+  <file src="src/CommandUtils.php">
+    <MixedArgument>
+      <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
+    </MixedArgument>
+    <MixedAssignment>
+      <code><![CDATA[$value]]></code>
+    </MixedAssignment>
+    <MixedOperand>
+      <code><![CDATA[\is_numeric($key) ? $value : "{$key}={$value}"]]></code>
+    </MixedOperand>
+    <PossiblyInvalidArgument>
+      <code><![CDATA[$key]]></code>
+      <code><![CDATA[$key]]></code>
+    </PossiblyInvalidArgument>
+  </file>
+  <file src="src/Commands/ScheduleFinishCommand.php">
+    <InvalidClassConstantType>
+      <code><![CDATA[DESCRIPTION]]></code>
+      <code><![CDATA[SIGNATURE]]></code>
+    </InvalidClassConstantType>
+    <MixedAssignment>
+      <code><![CDATA[$exitCode]]></code>
+      <code><![CDATA[$id]]></code>
+    </MixedAssignment>
+    <PossiblyNullArgument>
+      <code><![CDATA[$this->container]]></code>
+    </PossiblyNullArgument>
+  </file>
+  <file src="src/Commands/ScheduleListCommand.php">
+    <InvalidClassConstantType>
+      <code><![CDATA[DESCRIPTION]]></code>
+      <code><![CDATA[NAME]]></code>
+    </InvalidClassConstantType>
+    <PossiblyNullArgument>
+      <code><![CDATA[$this->output]]></code>
+    </PossiblyNullArgument>
+  </file>
+  <file src="src/Commands/ScheduleRunCommand.php">
+    <InvalidClassConstantType>
+      <code><![CDATA[DESCRIPTION]]></code>
+      <code><![CDATA[NAME]]></code>
+    </InvalidClassConstantType>
+    <PossiblyNullArgument>
+      <code><![CDATA[$this->container]]></code>
+    </PossiblyNullArgument>
+  </file>
+  <file src="src/Commands/ScheduleWorkCommand.php">
+    <InvalidClassConstantType>
+      <code><![CDATA[DESCRIPTION]]></code>
+      <code><![CDATA[NAME]]></code>
+    </InvalidClassConstantType>
+  </file>
+  <file src="src/Config/SchedulerConfig.php">
+    <MixedArgument>
+      <code><![CDATA[$timezone]]></code>
+    </MixedArgument>
+    <MixedAssignment>
+      <code><![CDATA[$timezone]]></code>
+    </MixedAssignment>
+    <MixedInferredReturnType>
+      <code><![CDATA[?array]]></code>
+      <code><![CDATA[?string]]></code>
+      <code><![CDATA[?string]]></code>
+    </MixedInferredReturnType>
+    <MixedReturnStatement>
+      <code><![CDATA[$this->config['cacheStorage'] ?? null]]></code>
+      <code><![CDATA[$this->config['cacheStorage'] ?? null]]></code>
+      <code><![CDATA[$this->config['expression']['aliases'] ?? null]]></code>
+      <code><![CDATA[$this->config['expression']['aliases'] ?? null]]></code>
+      <code><![CDATA[$this->config['queueConnection'] ?? null]]></code>
+      <code><![CDATA[$this->config['queueConnection'] ?? null]]></code>
+    </MixedReturnStatement>
+  </file>
+  <file src="src/EveryMinuteCommandRunner.php">
+    <MixedArgument>
+      <code><![CDATA[$execution->getIncrementalErrorOutput()]]></code>
+      <code><![CDATA[$execution->getIncrementalOutput()]]></code>
+    </MixedArgument>
+    <MixedAssignment>
+      <code><![CDATA[$execution]]></code>
+    </MixedAssignment>
+    <MixedMethodCall>
+      <code><![CDATA[getIncrementalErrorOutput]]></code>
+      <code><![CDATA[getIncrementalOutput]]></code>
+      <code><![CDATA[isRunning]]></code>
+    </MixedMethodCall>
+    <PossiblyNullFunctionCall>
+      <code><![CDATA[$onError($errorOutput)]]></code>
+      <code><![CDATA[$onSuccess($output)]]></code>
+    </PossiblyNullFunctionCall>
+  </file>
+  <file src="src/Job/CallbackJob.php">
+    <MixedAssignment>
+      <code><![CDATA[$config]]></code>
+      <code><![CDATA[$invoker]]></code>
+      <code><![CDATA[$queue]]></code>
+    </MixedAssignment>
+    <MixedMethodCall>
+      <code><![CDATA[getConnection]]></code>
+      <code><![CDATA[getQueueConnection]]></code>
+      <code><![CDATA[invoke]]></code>
+      <code><![CDATA[pushCallable]]></code>
+    </MixedMethodCall>
+    <PossiblyNullOperand>
+      <code><![CDATA[$this->description]]></code>
+    </PossiblyNullOperand>
+    <RiskyTruthyFalsyComparison>
+      <code><![CDATA[$this->name]]></code>
+    </RiskyTruthyFalsyComparison>
+  </file>
+  <file src="src/Job/Job.php">
+    <MixedAssignment>
+      <code><![CDATA[$callback]]></code>
+      <code><![CDATA[$callback]]></code>
+      <code><![CDATA[$callback]]></code>
+      <code><![CDATA[$callback]]></code>
+      <code><![CDATA[$invoker]]></code>
+      <code><![CDATA[$invoker]]></code>
+      <code><![CDATA[$invoker]]></code>
+    </MixedAssignment>
+    <MixedMethodCall>
+      <code><![CDATA[invoke]]></code>
+      <code><![CDATA[invoke]]></code>
+      <code><![CDATA[invoke]]></code>
+      <code><![CDATA[invoke]]></code>
+    </MixedMethodCall>
+  </file>
+  <file src="src/JobsLocator.php">
+    <RiskyTruthyFalsyComparison>
+      <code><![CDATA[$schedule->runAs]]></code>
+    </RiskyTruthyFalsyComparison>
+  </file>
+  <file src="src/Schedule.php">
+    <PossiblyNullArgument>
+      <code><![CDATA[$commandName]]></code>
+    </PossiblyNullArgument>
+    <RedundantConditionGivenDocblockType>
+      <code><![CDATA[$command instanceof Command]]></code>
+    </RedundantConditionGivenDocblockType>
+  </file>
+  <file src="src/Testing/FakeJobHandler.php">
+    <MixedAssignment>
+      <code><![CDATA[$job]]></code>
+      <code><![CDATA[$jobs[]]]></code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Testing/FakeJobMutex.php">
+    <MixedArgument>
+      <code><![CDATA[$this->created[$id]]]></code>
+    </MixedArgument>
+  </file>
+  <file src="src/Testing/FakeJobRegistry.php">
+    <MixedAssignment>
+      <code><![CDATA[$job]]></code>
+      <code><![CDATA[$jobs[]]]></code>
+    </MixedAssignment>
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[$jobs]]></code>
+      <code><![CDATA[$this->registered]]></code>
+    </MixedReturnTypeCoercion>
+  </file>
+</files>

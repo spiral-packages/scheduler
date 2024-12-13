@@ -9,11 +9,9 @@ use Spiral\Scheduler\Attribute\Schedule;
 #[Schedule(
     name: 'Another simple job',
     expression: '@everyFifteenMinutes',
-    description: 'Another simple job description'
+    description: 'Another simple job description',
 )]
 final class AnotherSimpleJobWithAttribute
 {
-    public function __invoke()
-    {
-    }
+    public function __invoke(): void {}
 }

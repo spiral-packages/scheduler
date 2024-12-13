@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Spiral\Scheduler\Attribute;
 
-use Attribute;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 
-#[Attribute(Attribute::TARGET_CLASS), NamedArgumentConstructor]
+#[\Attribute(\Attribute::TARGET_CLASS), NamedArgumentConstructor]
 class Schedule
 {
     public function __construct(
@@ -17,7 +16,6 @@ class Schedule
         public readonly ?string $runAs = null,
         public readonly bool|int $withoutOverlapping = false,
         public readonly bool $runInBackground = false,
-        public readonly array $parameters = []
-    ) {
-    }
+        public readonly array $parameters = [],
+    ) {}
 }

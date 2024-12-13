@@ -13,14 +13,18 @@ use Butschster\CronExpression\Traits\Months;
 use Butschster\CronExpression\Traits\Weeks;
 use Butschster\CronExpression\Traits\Years;
 use Cron\CronExpression;
-use DateTimeInterface;
 use Psr\Container\ContainerInterface;
 use Spiral\Core\InvokerInterface;
 use Spiral\Scheduler\Mutex\JobMutexInterface;
 
 abstract class Job
 {
-    use Minutes, Hours, Days, Weeks, Months, Years;
+    use Minutes;
+    use Hours;
+    use Days;
+    use Weeks;
+    use Months;
+    use Years;
 
     public const SUNDAY = 0;
     public const MONDAY = 1;
@@ -29,7 +33,6 @@ abstract class Job
     public const THURSDAY = 4;
     public const FRIDAY = 5;
     public const SATURDAY = 6;
-
     public const JAN = 1;
     public const FEB = 2;
     public const MAR = 3;
@@ -106,9 +109,8 @@ abstract class Job
 
     public function __construct(
         protected readonly JobMutexInterface $mutex,
-        protected CronExpression $expression
-    ) {
-    }
+        protected CronExpression $expression,
+    ) {}
 
     /**
      * Set the human-friendly description of the job.
@@ -135,7 +137,7 @@ abstract class Job
      */
     public function getExpression(): string
     {
-        return (string)$this->expression;
+        return (string) $this->expression;
     }
 
     /**
@@ -246,33 +248,6 @@ abstract class Job
     }
 
     /**
-     * Call all of the "before" callbacks for the job.
-     */
-    final protected function callBeforeCallbacks(ContainerInterface $container): void
-    {
-        $invoker = $container->get(InvokerInterface::class);
-
-        foreach ($this->beforeCallbacks as $callback) {
-            $invoker->invoke($callback);
-        }
-    }
-
-    /**
-     * Call all of the "after" callbacks for the job.
-     */
-    final protected function callAfterCallbacks(ContainerInterface $container): void
-    {
-        $invoker = $container->get(InvokerInterface::class);
-
-        foreach ($this->afterCallbacks as $callback) {
-            $invoker->invoke($callback, [
-                'exitCode' => $this->exitCode,
-                'job' => $this,
-            ]);
-        }
-    }
-
-    /**
      * Call all of the "after" callbacks for the job.
      */
     public function finish(ContainerInterface $container, int $exitCode): void
@@ -313,11 +288,55 @@ abstract class Job
         return $this->expression->isDue($date);
     }
 
-    public function on(DateTimeInterface $time): self
+    public function on(\DateTimeInterface $time): self
     {
         $this->set(new DateTime($time));
 
         return $this;
+    }
+
+    /**
+     * @internal
+     */
+    abstract public function run(ContainerInterface $container): void;
+
+    abstract public function getSystemDescription(): string;
+
+    /**
+     * Get the id for the scheduled command.
+     */
+    abstract public function getId(): string;
+
+    /**
+     * Get the id for the scheduled command.
+     */
+    abstract public function getName(): string;
+
+    /**
+     * Call all of the "before" callbacks for the job.
+     */
+    final protected function callBeforeCallbacks(ContainerInterface $container): void
+    {
+        $invoker = $container->get(InvokerInterface::class);
+
+        foreach ($this->beforeCallbacks as $callback) {
+            $invoker->invoke($callback);
+        }
+    }
+
+    /**
+     * Call all of the "after" callbacks for the job.
+     */
+    final protected function callAfterCallbacks(ContainerInterface $container): void
+    {
+        $invoker = $container->get(InvokerInterface::class);
+
+        foreach ($this->afterCallbacks as $callback) {
+            $invoker->invoke($callback, [
+                'exitCode' => $this->exitCode,
+                'job' => $this,
+            ]);
+        }
     }
 
     /**
@@ -342,19 +361,4 @@ abstract class Job
 
         return $this;
     }
-
-    /** @internal */
-    abstract public function run(ContainerInterface $container): void;
-
-    abstract public function getSystemDescription(): string;
-
-    /**
-     * Get the id for the scheduled command.
-     */
-    abstract public function getId(): string;
-
-    /**
-     * Get the id for the scheduled command.
-     */
-    abstract public function getName(): string;
 }

@@ -11,7 +11,6 @@ use Spiral\Queue\QueueConnectionProviderInterface;
 use Spiral\Scheduler\CommandUtils;
 use Spiral\Scheduler\Config\SchedulerConfig;
 use Spiral\Scheduler\Mutex\JobMutexInterface;
-use Throwable;
 
 final class CallbackJob extends Job
 {
@@ -22,7 +21,7 @@ final class CallbackJob extends Job
         CronExpression $expression,
         protected ?string $description,
         private readonly \Closure $callback,
-        private readonly array $parameters = []
+        private readonly array $parameters = [],
     ) {
         parent::__construct($mutex, $expression);
     }
@@ -48,7 +47,7 @@ final class CallbackJob extends Job
 
                 $queue->pushCallable(static function (
                     InvokerInterface $invoker,
-                    JobMutexInterface $mutex
+                    JobMutexInterface $mutex,
                 ) use ($callback, $params, $id): void {
                     $invoker->invoke($callback, $params);
                     $mutex->forget($id);
@@ -58,7 +57,7 @@ final class CallbackJob extends Job
                 $invoker->invoke($callback, $params);
                 $this->removeMutex();
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->removeMutex();
             throw $e;
         }
@@ -66,12 +65,12 @@ final class CallbackJob extends Job
 
     public function getId(): string
     {
-        return 'schedule-'.\sha1($this->getExpression().$this->description);
+        return 'schedule-' . \sha1($this->getExpression() . $this->description);
     }
 
     public function getSystemDescription(): string
     {
-        return 'Callback job: '.$this->getId();
+        return 'Callback job: ' . $this->getId();
     }
 
     public function getName(): string
@@ -80,7 +79,7 @@ final class CallbackJob extends Job
             return $this->name;
         }
 
-        return 'callback: '.CommandUtils::compileParameters(array_keys($this->parameters));
+        return 'callback: ' . CommandUtils::compileParameters(\array_keys($this->parameters));
     }
 
     public function setName(string $name): self

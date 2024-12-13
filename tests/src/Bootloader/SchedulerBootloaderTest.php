@@ -19,61 +19,61 @@ use Spiral\Scheduler\Tests\TestCase;
 
 final class SchedulerBootloaderTest extends TestCase
 {
-    public function testPeriodicCommandRunner()
+    public function testPeriodicCommandRunner(): void
     {
         $this->assertContainerBoundAsSingleton(
             PeriodicCommandRunnerInterface::class,
-            EveryMinuteCommandRunner::class
+            EveryMinuteCommandRunner::class,
         );
     }
 
-    public function testSchedule()
+    public function testSchedule(): void
     {
         $this->assertContainerBoundAsSingleton(
             Schedule::class,
-            Schedule::class
+            Schedule::class,
         );
     }
 
-    public function testJobMutex()
+    public function testJobMutex(): void
     {
         $this->assertContainerBoundAsSingleton(
             JobMutexInterface::class,
-            CacheJobMutex::class
+            CacheJobMutex::class,
         );
     }
 
-    public function testJobsLocator()
+    public function testJobsLocator(): void
     {
         $this->assertContainerBoundAsSingleton(
             JobsLocatorInterface::class,
-            JobsLocator::class
+            JobsLocator::class,
         );
 
         $this->assertContainerBoundAsSingleton(
             JobsLocator::class,
-            JobsLocator::class
+            JobsLocator::class,
         );
     }
 
-    public function testJobRegistry()
+    public function testJobRegistry(): void
     {
         $this->assertContainerBoundAsSingleton(
             JobRegistryInterface::class,
-            JobRegistry::class
+            JobRegistry::class,
         );
 
         $this->assertContainerBoundAsSingleton(
             JobRegistry::class,
-            JobRegistry::class
+            JobRegistry::class,
         );
     }
 
-    public function testJobHandler()
+    public function testJobHandler(): void
     {
         $this->assertContainerBoundAsSingleton(
             JobHandlerInterface::class,
-            JobHandler::class
+            JobHandler::class,
         );
     }
 }

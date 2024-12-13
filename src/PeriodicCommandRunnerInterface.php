@@ -6,5 +6,5 @@ namespace Spiral\Scheduler;
 
 interface PeriodicCommandRunnerInterface
 {
-    public function run(string $command, \Closure $onSuccess = null, \Closure $onError = null): void;
+    public function run(string $command, ?\Closure $onSuccess = null, ?\Closure $onError = null): void;
 }

@@ -10,7 +10,6 @@ final class JobFinished
 {
     public function __construct(
         public readonly Job $job,
-        public readonly float $runtime
-    ) {
-    }
+        public readonly float $runtime,
+    ) {}
 }

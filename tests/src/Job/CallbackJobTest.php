@@ -19,25 +19,6 @@ final class CallbackJobTest extends TestCase
     private CallbackJob $job;
     private m\MockInterface $mutex;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->pinger = $this->mockContainer(PingerInterface::class);
-
-        $this->job = new CallbackJob(
-            $this->mutex = $this->mockContainer(JobMutexInterface::class),
-            new CronExpression('* * * * *'),
-            'Callable job description',
-            function (PingerInterface $pinger, string $url) {
-                $pinger->ping($url);
-            },
-            [
-                'url' => 'https://site.com',
-            ]
-        );
-    }
-
     public function testGetsId(): void
     {
         $this->assertSame('schedule-64ec6d2de2e52435fdb2cb0676597ed557c88810', $this->job->getId());
@@ -82,7 +63,7 @@ final class CallbackJobTest extends TestCase
             ->once()
             ->with('queue-test')
             ->andReturn($queue = m::mock(QueueInterface::class));
-        $queue->shouldReceive('pushCallable')->once()->andReturnUsing(function (\Closure $closure) {
+        $queue->shouldReceive('pushCallable')->once()->andReturnUsing(function (\Closure $closure): void {
             $this->getContainer()->invoke($closure);
         });
 
@@ -110,7 +91,7 @@ final class CallbackJobTest extends TestCase
             ->once()
             ->with('queue-test')
             ->andReturn($queue = m::mock(QueueInterface::class));
-        $queue->shouldReceive('pushCallable')->once()->andReturnUsing(function (\Closure $closure) {
+        $queue->shouldReceive('pushCallable')->once()->andReturnUsing(function (\Closure $closure): void {
             $this->getContainer()->invoke($closure);
         });
 
@@ -131,5 +112,24 @@ final class CallbackJobTest extends TestCase
 
         $this->pinger->shouldReceive('ping')->once()->with('https://site.com')->andReturnTrue();
         $this->job->withoutOverlapping(1500)->run($this->getContainer());
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->pinger = $this->mockContainer(PingerInterface::class);
+
+        $this->job = new CallbackJob(
+            $this->mutex = $this->mockContainer(JobMutexInterface::class),
+            new CronExpression('* * * * *'),
+            'Callable job description',
+            static function (PingerInterface $pinger, string $url): void {
+                $pinger->ping($url);
+            },
+            [
+                'url' => 'https://site.com',
+            ],
+        );
     }
 }

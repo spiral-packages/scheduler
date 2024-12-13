@@ -21,23 +21,6 @@ final class CommandJobTest extends TestCase
     private m\MockInterface $processFactory;
     private m\MockInterface $mutex;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->job = new CommandJob(
-            new CommandBuilder(new CommandRunner(
-                $finder = m::mock(PhpExecutableFinder::class)
-            )),
-            $this->processFactory = m::mock(ProcessFactory::class),
-            $this->mutex = m::mock(JobMutexInterface::class),
-            new CronExpression('* * * * *'),
-            'foo:bar'
-        );
-
-        $finder->shouldReceive('find')->andReturn('/usr/bin/php');
-    }
-
     public function testGetsId(): void
     {
         $this->assertSame('schedule-6a31f94cad6c051f7fc2c0bcef19cbcded3f7330', $this->job->getId());
@@ -119,5 +102,22 @@ final class CommandJobTest extends TestCase
         $this->job->withoutOverlapping(1600)->run($this->getContainer());
 
         $this->assertSame(1600, $this->job->getExpiresAt());
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->job = new CommandJob(
+            new CommandBuilder(new CommandRunner(
+                $finder = m::mock(PhpExecutableFinder::class),
+            )),
+            $this->processFactory = m::mock(ProcessFactory::class),
+            $this->mutex = m::mock(JobMutexInterface::class),
+            new CronExpression('* * * * *'),
+            'foo:bar',
+        );
+
+        $finder->shouldReceive('find')->andReturn('/usr/bin/php');
     }
 }

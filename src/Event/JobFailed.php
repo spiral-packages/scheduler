@@ -10,7 +10,6 @@ final class JobFailed
 {
     public function __construct(
         public readonly Job $job,
-        public readonly \Throwable $exception
-    ) {
-    }
+        public readonly \Throwable $exception,
+    ) {}
 }

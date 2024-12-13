@@ -10,16 +10,15 @@ use Symfony\Component\Process\Process;
 class ProcessFactory
 {
     public function __construct(
-        private readonly DirectoriesInterface $dirs
-    ) {
-    }
+        private readonly DirectoriesInterface $dirs,
+    ) {}
 
     public function createFromShellCommandline(string $command): Process
     {
         return Process::fromShellCommandline(
             command: $command,
             cwd: $this->dirs->get('root'),
-            timeout: null
+            timeout: null,
         );
     }
 }

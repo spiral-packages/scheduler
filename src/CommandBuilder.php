@@ -7,21 +7,20 @@ namespace Spiral\Scheduler;
 final class CommandBuilder
 {
     public function __construct(
-        private readonly CommandRunner $commandRunner
-    ) {
-    }
+        private readonly CommandRunner $commandRunner,
+    ) {}
 
     public function buildForegroundCommand(
         string $command,
         bool $appendOutput = false,
         string $output = '/dev/null',
-        ?string $user = null
+        ?string $user = null,
     ): string {
         $output = ProcessUtils::escapeArgument($output);
 
         return $this->ensureCorrectUser(
-            $command.($appendOutput ? ' >> ' : ' > ').$output.' 2>&1',
-            $user
+            $command . ($appendOutput ? ' >> ' : ' > ') . $output . ' 2>&1',
+            $user,
         );
     }
 
@@ -30,18 +29,18 @@ final class CommandBuilder
         string $id,
         bool $appendOutput = false,
         string $output = '/dev/null',
-        ?string $user = null
+        ?string $user = null,
     ): string {
         $output = ProcessUtils::escapeArgument($output);
 
         $redirect = $appendOutput ? ' >> ' : ' > ';
 
-        $finished = $this->commandRunner->formatCommandString('schedule:finish').' "'.$id.'"';
+        $finished = $this->commandRunner->formatCommandString('schedule:finish') . ' "' . $id . '"';
 
         return $this->ensureCorrectUser(
-            '('.$command.$redirect.$output.' 2>&1 ; '.$finished.' "$?") > '
-            .ProcessUtils::escapeArgument('/dev/null').' 2>&1 &',
-            $user
+            '(' . $command . $redirect . $output . ' 2>&1 ; ' . $finished . ' "$?") > '
+            . ProcessUtils::escapeArgument('/dev/null') . ' 2>&1 &',
+            $user,
         );
     }
 
@@ -50,6 +49,6 @@ final class CommandBuilder
      */
     protected function ensureCorrectUser(string $command, ?string $user = null): string
     {
-        return $user ? 'sudo -u '.$user.' -- sh -c \''.$command.'\'' : $command;
+        return $user ? 'sudo -u ' . $user . ' -- sh -c \'' . $command . '\'' : $command;
     }
 }

@@ -14,12 +14,12 @@ use Spiral\Tokenizer\ClassesInterface;
 
 final class JobsLocatorTest extends TestCase
 {
-    public function testLocateJobs()
+    public function testLocateJobs(): void
     {
         $locator = new JobsLocator(
             $classes = $this->mockContainer(ClassesInterface::class),
             new AttributeReader(),
-            $this->mockContainer(JobMutexInterface::class)
+            $this->mockContainer(JobMutexInterface::class),
         );
 
         $classes->shouldReceive('getClasses')->once()->andReturn([

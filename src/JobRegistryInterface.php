@@ -11,7 +11,6 @@ interface JobRegistryInterface
     public function register(Job $job): void;
 
     /**
-     * @param \DateTimeInterface $date
      * @return iterable<Job>
      */
     public function getDueJobs(\DateTimeInterface $date): iterable;

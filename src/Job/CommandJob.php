@@ -17,7 +17,7 @@ final class CommandJob extends Job
         private readonly ProcessFactory $processFactory,
         JobMutexInterface $mutex,
         CronExpression $expression,
-        private readonly string $command
+        private readonly string $command,
     ) {
         parent::__construct($mutex, $expression);
     }
@@ -39,6 +39,19 @@ final class CommandJob extends Job
         $this->runInBackground
             ? $this->runCommandInBackground($container)
             : $this->runCommandInForeground($container);
+    }
+
+    /**
+     * Get the id for the scheduled command.
+     */
+    public function getId(): string
+    {
+        return 'schedule-' . \sha1($this->getExpression() . $this->command);
+    }
+
+    public function getSystemDescription(): string
+    {
+        return $this->buildCommand();
     }
 
     /**
@@ -73,19 +86,6 @@ final class CommandJob extends Job
         }
     }
 
-    /**
-     * Get the id for the scheduled command.
-     */
-    public function getId(): string
-    {
-        return 'schedule-'.\sha1($this->getExpression().$this->command);
-    }
-
-    public function getSystemDescription(): string
-    {
-        return $this->buildCommand();
-    }
-
     private function buildCommand(): string
     {
         if ($this->runInBackground) {
@@ -94,7 +94,7 @@ final class CommandJob extends Job
                 id: $this->getId(),
                 appendOutput: $this->shouldAppendOutput,
                 output: $this->output,
-                user: $this->user
+                user: $this->user,
             );
         }
 
@@ -102,7 +102,7 @@ final class CommandJob extends Job
             command: $this->command,
             appendOutput: $this->shouldAppendOutput,
             output: $this->output,
-            user: $this->user
+            user: $this->user,
         );
     }
 }

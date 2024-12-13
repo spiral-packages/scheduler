@@ -19,8 +19,7 @@ class JobsLocator implements JobsLocatorInterface
         private readonly ClassesInterface $classes,
         private readonly ReaderInterface $reader,
         private readonly JobMutexInterface $mutex,
-    ) {
-    }
+    ) {}
 
     public function getJobs(): array
     {
@@ -42,17 +41,17 @@ class JobsLocator implements JobsLocatorInterface
         $job = new CallbackJob(
             $this->mutex,
             new CronExpression(
-                $schedule->expression
+                $schedule->expression,
             ),
             $schedule->description,
-            static function (FactoryInterface $factory, InvokerInterface $invoker) use ($className, $parameters) {
+            static function (FactoryInterface $factory, InvokerInterface $invoker) use ($className, $parameters): void {
                 $object = $factory->make($className);
 
                 $invoker->invoke([
                     $object,
                     \method_exists($object, 'run') ? 'run' : '__invoke',
                 ], $parameters);
-            }
+            },
         );
 
         if ($schedule->name) {
@@ -65,7 +64,7 @@ class JobsLocator implements JobsLocatorInterface
 
         if ($schedule->withoutOverlapping === true) {
             $job->withoutOverlapping();
-        } else if(\is_int($schedule->withoutOverlapping)) {
+        } elseif (\is_int($schedule->withoutOverlapping)) {
             $job->withoutOverlapping($schedule->withoutOverlapping);
         }
 

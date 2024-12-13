@@ -12,7 +12,7 @@ final class SchedulerConfigTest extends TestCase
     public function testGetsTimezone(): void
     {
         $config = new SchedulerConfig([
-            'timezone' => 'UTC'
+            'timezone' => 'UTC',
         ]);
 
         $this->assertSame('UTC', $config->getTimezone()->getName());
@@ -21,7 +21,7 @@ final class SchedulerConfigTest extends TestCase
     public function testGetsTimezoneCanReturnNull(): void
     {
         $config = new SchedulerConfig([
-            'timezone' => null
+            'timezone' => null,
         ]);
         $this->assertNull($config->getTimezone());
     }
@@ -36,7 +36,7 @@ final class SchedulerConfigTest extends TestCase
     public function testGetsCacheStorage(): void
     {
         $config = new SchedulerConfig([
-            'cacheStorage' => 'foo'
+            'cacheStorage' => 'foo',
         ]);
         $this->assertSame('foo', $config->getCacheStorage());
     }
@@ -50,7 +50,7 @@ final class SchedulerConfigTest extends TestCase
     public function testGetsQueueConnection(): void
     {
         $config = new SchedulerConfig([
-            'queueConnection' => 'bar'
+            'queueConnection' => 'bar',
         ]);
         $this->assertSame('bar', $config->getQueueConnection());
     }

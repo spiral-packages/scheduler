@@ -12,13 +12,6 @@ final class JobRegistryTest extends TestCase
 {
     private JobRegistry $registry;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->registry = new JobRegistry();
-    }
-
     public function testJobShouldBeRegistered(): void
     {
         $this->assertCount(0, $this->registry->getJobs());
@@ -26,7 +19,7 @@ final class JobRegistryTest extends TestCase
         $this->assertCount(1, $this->registry->getJobs());
     }
 
-    public function testGetsGueJobs()
+    public function testGetsGueJobs(): void
     {
         $date = new \DateTimeImmutable();
 
@@ -39,10 +32,17 @@ final class JobRegistryTest extends TestCase
         $this->registry->register($job3 = m::mock(Job::class));
         $job3->shouldReceive('isDue')->once()->with($date)->andReturnTrue();
 
-        $jobs = iterator_to_array($this->registry->getDueJobs($date));
+        $jobs = \iterator_to_array($this->registry->getDueJobs($date));
 
         $this->assertCount(2, $jobs);
         $this->assertContains($job1, $jobs);
         $this->assertContains($job3, $jobs);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->registry = new JobRegistry();
     }
 }

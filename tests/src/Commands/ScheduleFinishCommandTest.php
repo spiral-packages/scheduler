@@ -19,14 +19,7 @@ final class ScheduleFinishCommandTest extends TestCase
 {
     private \Mockery\MockInterface $registry;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->registry = $this->mockContainer(JobRegistryInterface::class);
-    }
-
-    public function testFoundJobShouldBeFinished()
+    public function testFoundJobShouldBeFinished(): void
     {
         $events = $this->mockContainer(EventDispatcherInterface::class);
 
@@ -35,7 +28,7 @@ final class ScheduleFinishCommandTest extends TestCase
             $job2 = m::mock(Job::class),
         ]);
 
-        $events->shouldReceive('dispatch')->withArgs(function (mixed $event) use ($job1) {
+        $events->shouldReceive('dispatch')->withArgs(static function (mixed $event) use ($job1) {
             return match (true) {
                 $event instanceof CommandStarting => $event->command instanceof ScheduleFinishCommand,
                 $event instanceof BackgroundJobFinished => $event->job === $job1,
@@ -43,7 +36,7 @@ final class ScheduleFinishCommandTest extends TestCase
                     && $event->command instanceof ScheduleFinishCommand,
                 $event instanceof InterceptorCalling,
                 $event instanceof \Spiral\Core\Event\InterceptorCalling => true,
-                default => false
+                default => false,
             };
         });
 
@@ -53,5 +46,12 @@ final class ScheduleFinishCommandTest extends TestCase
         $job2->shouldReceive('getId')->once()->andReturn('bar-id');
 
         $this->runCommand('schedule:finish', ['id' => 'foo-id', 'code' => 200]);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->registry = $this->mockContainer(JobRegistryInterface::class);
     }
 }
