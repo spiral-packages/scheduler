@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Spiral\Scheduler;
 
+use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Spiral\Core\Container;
 use Spiral\Scheduler\Event\JobFailed;
 use Spiral\Scheduler\Event\JobFinished;
 use Spiral\Scheduler\Event\JobStarting;
@@ -15,7 +15,7 @@ use Spiral\Snapshots\SnapshotterInterface;
 final class JobHandler implements JobHandlerInterface
 {
     public function __construct(
-        private readonly Container $container,
+        private readonly ContainerInterface $container,
         private readonly ?SnapshotterInterface $snapshotter = null,
         private readonly ?EventDispatcherInterface $dispatcher = null
     ) {

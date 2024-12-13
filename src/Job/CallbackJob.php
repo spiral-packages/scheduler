@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Spiral\Scheduler\Job;
 
 use Cron\CronExpression;
-use Spiral\Core\Container;
+use Psr\Container\ContainerInterface;
 use Spiral\Core\InvokerInterface;
 use Spiral\Queue\QueueConnectionProviderInterface;
 use Spiral\Scheduler\CommandUtils;
@@ -27,7 +27,7 @@ final class CallbackJob extends Job
         parent::__construct($mutex, $expression);
     }
 
-    public function run(Container $container): void
+    public function run(ContainerInterface $container): void
     {
         if ($this->withoutOverlapping && ! $this->mutex->create($this->getId(), $this->getExpiresAt())) {
             return;
@@ -54,7 +54,8 @@ final class CallbackJob extends Job
                     $mutex->forget($id);
                 });
             } else {
-                $container->invoke($callback, $params);
+                $invoker = $container->get(InvokerInterface::class);
+                $invoker->invoke($callback, $params);
                 $this->removeMutex();
             }
         } catch (Throwable $e) {
