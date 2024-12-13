@@ -31,7 +31,7 @@ final class CommandRunnerTest extends TestCase
     public function testNonExistPhpBinaryShouldThrowAnException(): void
     {
         $this->expectException(CommandRunnerException::class);
-        $this->expectErrorMessage('PHP binary not found.');
+        $this->expectExceptionMessage('PHP binary not found.');
 
         $this->finder->shouldReceive('find')->once()->andReturnFalse();
         $this->runner->phpBinary();
