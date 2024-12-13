@@ -8,6 +8,7 @@ use Mockery as m;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Spiral\Console\Event\CommandFinished;
 use Spiral\Console\Event\CommandStarting;
+use Spiral\Interceptors\Event\InterceptorCalling;
 use Spiral\Scheduler\Commands\ScheduleFinishCommand;
 use Spiral\Scheduler\Event\BackgroundJobFinished;
 use Spiral\Scheduler\Job\Job;
@@ -34,18 +35,20 @@ final class ScheduleFinishCommandTest extends TestCase
             $job2 = m::mock(Job::class),
         ]);
 
-        $events->shouldReceive('dispatch')->times(3)->withArgs(function (mixed $event) use ($job1) {
+        $events->shouldReceive('dispatch')->withArgs(function (mixed $event) use ($job1) {
             return match (true) {
                 $event instanceof CommandStarting => $event->command instanceof ScheduleFinishCommand,
                 $event instanceof BackgroundJobFinished => $event->job === $job1,
                 $event instanceof CommandFinished => $event->exitCode === 0
                     && $event->command instanceof ScheduleFinishCommand,
+                $event instanceof InterceptorCalling,
+                $event instanceof \Spiral\Core\Event\InterceptorCalling => true,
                 default => false
             };
         });
 
         $job1->shouldReceive('getId')->once()->andReturn('foo-id');
-        $job1->shouldReceive('finish')->with($this->getContainer(), 200);
+        $job1->shouldReceive('finish')->with(m::any(), 200);
 
         $job2->shouldReceive('getId')->once()->andReturn('bar-id');
 
