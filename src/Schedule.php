@@ -26,7 +26,7 @@ final class Schedule
     /**
      * Add a new console command to the schedule.
      */
-    public function command(string $commandName, array $parameters = [], ?string $description = null): CommandJob
+    public function command(string $commandName, array $parameters = [], ?string $description = null, ?string $cronExpression = null): CommandJob
     {
         if (\class_exists($commandName)) {
             /** @var Command $command */
@@ -48,7 +48,7 @@ final class Schedule
     /**
      * Add a new command job to the schedule.
      */
-    public function exec(string $command, array $parameters = [], ?string $description = null): CommandJob
+    public function exec(string $command, array $parameters = [], ?string $description = null, ?string $cronExpression = null): CommandJob
     {
         if (\count($parameters)) {
             $command .= ' ' . CommandUtils::compileParameters($parameters);
@@ -58,7 +58,7 @@ final class Schedule
             commandBuilder: new CommandBuilder($this->commandRunner),
             processFactory: $this->processFactory,
             mutex: $this->jobMutex,
-            expression: $this->createCronExpression(),
+            expression: $this->createCronExpression($cronExpression),
             command: $command,
         );
 
@@ -83,8 +83,8 @@ final class Schedule
         return $job;
     }
 
-    private function createCronExpression(): CronExpression
+    private function createCronExpression(?string $cronExpression = null): CronExpression
     {
-        return new CronExpression(self::DEFAULT_EXPRESSION);
+        return new CronExpression($cronExpression ?? self::DEFAULT_EXPRESSION);
     }
 }
