@@ -59,7 +59,7 @@ final class Schedule
             commandBuilder: new CommandBuilder($this->commandRunner),
             processFactory: $this->processFactory,
             mutex: $this->jobMutex,
-            expression: $cronExpression ??  $this->createDefaultCronExpression(),
+            expression: $cronExpression ?? $this->createDefaultCronExpression(),
             command: $command,
         );
 
