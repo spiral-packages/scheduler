@@ -42,6 +42,7 @@ final class Schedule
             $this->commandRunner->formatCommandString($commandName),
             $parameters,
             $description,
+            $cronExpression
         );
     }
 
