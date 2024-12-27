@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Scheduler\Tests;
 
+use Cron\CronExpression;
 use Spiral\Scheduler\CommandRunner;
 use Spiral\Scheduler\Mutex\JobMutexInterface;
 use Spiral\Scheduler\ProcessFactory;
@@ -35,6 +36,18 @@ final class ScheduleTest extends TestCase
         $job = $this->schedule
             ->command(SimpleCommand::class, ['baz' => 'biz'], 'Simple job')
             ->everyEvenMinute();
+
+        $this->assertSame('/usr/bin/php app.php foo:bar baz=\'biz\'', $job->getName());
+        $this->assertSame('Simple command', $job->getDescription());
+        $this->assertSame('*/2 * * * *', $job->getExpression());
+
+        $this->registry->assertRegisteredJob($job);
+    }
+
+    public function testRegisterCommandWithCronExpression(): void
+    {
+        $job = $this->schedule
+            ->command(SimpleCommand::class, ['baz' => 'biz'], 'Simple job', new CronExpression('*/2 * * * *'));
 
         $this->assertSame('/usr/bin/php app.php foo:bar baz=\'biz\'', $job->getName());
         $this->assertSame('Simple command', $job->getDescription());
