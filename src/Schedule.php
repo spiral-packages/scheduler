@@ -69,11 +69,11 @@ final class Schedule
         return $job;
     }
 
-    public function call(string $description, \Closure $callback, array $parameters = []): CallbackJob
+    public function call(string $description, \Closure $callback, array $parameters = [], ?CronExpression $expression = null): CallbackJob
     {
         $job = new CallbackJob(
             mutex: $this->jobMutex,
-            expression: $this->createDefaultCronExpression(),
+            expression: $expression ?? $this->createDefaultCronExpression(),
             description: $description,
             callback: $callback,
             parameters: $parameters,
