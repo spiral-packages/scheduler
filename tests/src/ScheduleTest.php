@@ -69,6 +69,22 @@ final class ScheduleTest extends TestCase
         $this->registry->assertRegisteredJob($job);
     }
 
+    public function testRegisterCallableJobWithExpression(): void
+    {
+        $job = $this->schedule->call(
+            'Simple callable job',
+            static function (): void {},
+            ['baz' => 'biz'],
+            new CronExpression('*/4 * * * *'),
+        );
+
+        $this->assertSame('callback: \'baz\'', $job->getName());
+        $this->assertSame('Simple callable job', $job->getDescription());
+        $this->assertSame('*/4 * * * *', $job->getExpression());
+
+        $this->registry->assertRegisteredJob($job);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
