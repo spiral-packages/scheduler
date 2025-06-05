@@ -41,7 +41,7 @@ final class ScheduleRunCommand extends Command
             $jobsRan = true;
         }
 
-        if (! $jobsRan) {
+        if (! $jobsRan && $this->isVerbose()) {
             $this->info('No scheduled jobs are ready to run.');
         }
 
