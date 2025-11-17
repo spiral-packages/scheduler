@@ -11,8 +11,7 @@ final class CommandUtils
      */
     public static function compileParameters(array $parameters): string
     {
-        $string = '';
-
+        $parts = [];
         foreach ($parameters as $key => $value) {
             if (\is_array($value)) {
                 return self::compileArrayInput($key, $value);
@@ -22,10 +21,10 @@ final class CommandUtils
                 $value = ProcessUtils::escapeArgument($value);
             }
 
-            $string .= \is_numeric($key) ? $value : "{$key}={$value}";
+            $parts[] = \is_numeric($key) ? $value : "{$key}={$value}";
         }
 
-        return $string;
+        return \implode(' ', $parts);
     }
 
     /**

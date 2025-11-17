@@ -56,6 +56,23 @@ final class ScheduleTest extends TestCase
         $this->registry->assertRegisteredJob($job);
     }
 
+    public function testRegisterCommandWithSeveralParams(): void
+    {
+        $job = $this->schedule
+            ->command(
+                SimpleCommand::class,
+                [
+                    '-q',
+                    '--delay' => 1,
+                    '--parallel=5',
+                ],
+            );
+
+        $this->assertSame('/usr/bin/php app.php foo:bar -q --delay=3 --parallel=5', $job->getName());
+
+        $this->registry->assertRegisteredJob($job);
+    }
+
     public function testRegisterCallableJob(): void
     {
         $job = $this->schedule
