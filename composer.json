@@ -30,7 +30,7 @@
         "spiral/queue": "^3.14",
         "spiral/snapshots": "^3.14",
         "spiral/attributes": "^2.8 || ^3.0",
-        "symfony/process": "^6.0 || ^7.0"
+        "symfony/process": "^6.0 || ^7.0 || ^8.0"
     },
     "require-dev": {
         "spiral/code-style": "^2.2",
