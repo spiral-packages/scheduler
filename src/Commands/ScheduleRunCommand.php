@@ -31,8 +31,7 @@ final class ScheduleRunCommand extends Command
 
             $this->info(
                 \sprintf(
-                    '[%s] Running scheduled: `%s`',
-                    \date('c'),
+                    'Running scheduled: `%s`',
                     $job->getDescription() ?? $job->getSystemDescription(),
                 ),
             );
