@@ -17,11 +17,11 @@ final class CommandUtils
                 return self::compileArrayInput($key, $value);
             }
 
-            if (! \is_numeric($value) && ! \preg_match('/^(-.$|--.*)/i', $value)) {
-                $value = ProcessUtils::escapeArgument($value);
+            if (! \is_numeric($value) && ! \preg_match('/^(-.$|--.*)/i', (string) $value)) {
+                $value = ProcessUtils::escapeArgument((string) $value);
             }
 
-            $parts[] = \is_numeric($key) ? $value : "{$key}={$value}";
+            $parts[] = \is_numeric($key) ? (string) $value : "{$key}={$value}";
         }
 
         return \implode(' ', $parts);

@@ -17,11 +17,8 @@ final class ScheduleRunCommandTest extends TestCase
         $registry = $this->mockContainer(JobRegistryInterface::class);
         $registry->shouldReceive('getDueJobs')->andReturn([]);
 
-        $this->assertConsoleCommandOutputContainsStrings(
-            'schedule:run',
-            strings: ['No scheduled jobs are ready to run.'],
-            verbosityLevel: OutputInterface::VERBOSITY_VERBOSE,
-        );
+        $output = $this->runCommand('schedule:run', [], null, OutputInterface::VERBOSITY_VERBOSE);
+        $this->assertStringContainsString('No scheduled jobs are ready to run.', $output);
     }
 
     public function testDueJobsShouldBeRun(): void
