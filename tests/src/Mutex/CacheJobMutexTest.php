@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Spiral\Scheduler\Tests\Mutex;
 
-use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use Psr\SimpleCache\CacheInterface;
 use Spiral\Scheduler\Mutex\CacheJobMutex;
 use Spiral\Scheduler\Tests\TestCase;
@@ -34,11 +33,14 @@ final class CacheJobMutexTest extends TestCase
         $this->assertTrue($this->mutex->exists('job-id'));
     }
 
-    #[DoesNotPerformAssertions]
     public function testForget(): void
     {
-        $this->cache->shouldReceive('delete')->with('job-id');
+        $this->cache->shouldReceive('delete')->once()->with('job-id');
+        $this->cache->shouldReceive('has')->once()->with('job-id')->andReturnFalse();
+
         $this->mutex->forget('job-id');
+
+        $this->assertFalse($this->mutex->exists('job-id'));
     }
 
     protected function setUp(): void

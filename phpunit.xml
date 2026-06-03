@@ -10,7 +10,7 @@
          stderr="true"
          beStrictAboutOutputDuringTests="true"
 >
-    <source>
+    <coverage>
         <include>
             <directory>src</directory>
         </include>
@@ -18,8 +18,6 @@
             <directory>tests</directory>
             <directory>src/Test</directory>
         </exclude>
-    </source>
-    <coverage>
         <report>
             <html outputDirectory="runtime/coverage"/>
             <text outputFile="runtime/coverage.txt"/>
