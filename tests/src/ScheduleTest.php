@@ -68,7 +68,7 @@ final class ScheduleTest extends TestCase
                 ],
             );
 
-        $this->assertSame('/usr/bin/php app.php foo:bar -q --delay=3 --parallel=5', $job->getName());
+        $this->assertSame('/usr/bin/php app.php foo:bar -q --delay=1 --parallel=5', $job->getName());
 
         $this->registry->assertRegisteredJob($job);
     }
