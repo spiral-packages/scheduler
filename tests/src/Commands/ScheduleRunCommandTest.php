@@ -14,6 +14,7 @@ use Spiral\Scheduler\JobRegistryInterface;
 use Spiral\Scheduler\Tests\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
 final class ScheduleRunCommandTest extends TestCase
 {
@@ -22,10 +23,8 @@ final class ScheduleRunCommandTest extends TestCase
         $registry = $this->mockContainer(JobRegistryInterface::class);
         $registry->shouldReceive('getDueJobs')->andReturn([]);
 
-        $this->assertConsoleCommandOutputContainsStrings(
-            'schedule:run',
-            strings: ['No scheduled jobs are ready to run.'],
-        );
+        $output = $this->runCommand('schedule:run', [], null, OutputInterface::VERBOSITY_VERBOSE);
+        $this->assertStringContainsString('No scheduled jobs are ready to run.', $output);
     }
 
     public function testDueJobsShouldBeRun(): void

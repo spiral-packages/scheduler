@@ -17,6 +17,8 @@ final class CommandUtils
                 return self::compileArrayInput($key, $value);
             }
 
+            $value = (string) $value;
+
             if (! \is_numeric($value) && ! \preg_match('/^(-.$|--.*)/i', $value)) {
                 $value = ProcessUtils::escapeArgument($value);
             }
