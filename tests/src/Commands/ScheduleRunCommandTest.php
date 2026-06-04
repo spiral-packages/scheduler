@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace Spiral\Scheduler\Tests\Commands;
 
+use Carbon\Carbon;
 use Mockery as m;
+use Spiral\Scheduler\Commands\ScheduleRunCommand;
+use Spiral\Scheduler\Config\SchedulerConfig;
 use Spiral\Scheduler\Job\Job;
+use Spiral\Scheduler\JobHandlerInterface;
 use Spiral\Scheduler\JobRegistryInterface;
 use Spiral\Scheduler\Tests\TestCase;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 final class ScheduleRunCommandTest extends TestCase
@@ -65,5 +71,39 @@ final class ScheduleRunCommandTest extends TestCase
             return $job->getName() === 'Simple job';
         });
         $scheduler->assertHandledTotalJobs(2);
+    }
+
+    public function testUsesCarbonWithConfiguredTimezone(): void
+    {
+        $registry = $this->mockContainer(JobRegistryInterface::class);
+        $registry
+            ->shouldReceive('getDueJobs')
+            ->once()
+            ->withArgs(static function (Carbon $date): bool {
+                self::assertSame('America/Toronto', $date->getTimezone()->getName());
+                self::assertSame('2026-01-01 07:00:00', $date->format('Y-m-d H:i:s'));
+
+                return true;
+            })
+            ->andReturn([]);
+
+        Carbon::setTestNow(Carbon::parse('2026-01-01 12:00:00', 'UTC'));
+
+        try {
+            $this->mockContainer(JobHandlerInterface::class);
+            $this->getContainer()->bindSingleton(
+                SchedulerConfig::class,
+                new SchedulerConfig(['timezone' => 'America/Toronto']),
+            );
+
+            $command = new ScheduleRunCommand();
+            $command->setContainer($this->getContainer());
+
+            $result = $command->run(new ArrayInput([]), new BufferedOutput());
+        } finally {
+            Carbon::setTestNow();
+        }
+
+        $this->assertSame(0, $result);
     }
 }
